@@ -51,7 +51,7 @@ namespace gb_datahub
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-robot-status";
 
-    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, ""});
     //std::cout << response_.text << std::endl;
 
     if (response_.status_code == 200) {
@@ -64,7 +64,7 @@ namespace gb_datahub
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-robot-status/"+ id;
 
-    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, ""});
     //std::cout << response_.text << std::endl;
 
     if (response_.status_code == 200) {
@@ -80,7 +80,7 @@ namespace gb_datahub
     std::string payload = "  {\n    \"@id\": \"xx\",\n    \"@type\": \"xx\",\n    \"message\": xx,\n    \"episode\": \"xx\"\n  \"team\": \"xx\"\n  \"timestamp\": \"xx\"\n  \"x\": \"xx\"\n  \"y\": \"xx\"\n  \"z\": \"xx\"\n  }";
     payload = info;
 
-    auto response_ = cpr::Put(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Put(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, ""});
 
   }
 
@@ -91,7 +91,7 @@ namespace gb_datahub
     std::string payload = "  {\n    \"@id\": \"xx\",\n    \"@type\": \"xx\",\n    \"message\": xx,\n    \"episode\": \"xx\"\n  \"team\": \"xx\"\n  \"timestamp\": \"xx\"\n  \"x\": \"xx\"\n  \"y\": \"xx\"\n  \"z\": \"xx\"\n  }";
     payload = info;
 
-    auto response_ = cpr::Post(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Post(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, ""});
   }
 
 
@@ -99,7 +99,7 @@ namespace gb_datahub
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-robot-location";
 
-    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, ""});
     //std::cout << response_.text << std::endl;
 
     if (response_.status_code == 200) {
@@ -112,7 +112,7 @@ namespace gb_datahub
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-robot-location/"+id;
 
-    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, ""});
     //std::cout << response_.text << std::endl;
 
     if (response_.status_code == 200) {
@@ -128,7 +128,7 @@ namespace gb_datahub
     std::string payload = "  {\n    \"@id\": \"xx\",\n    \"@type\": \"xx\",\n   \"episode\": \"xx\"\n  \"team\": \"xx\"\n  \"timestamp\": \"xx\"\n  \"x\": \"xx\"\n  \"y\": \"xx\"\n  \"z\": \"xx\"\n  }";
     payload = info;
 
-    auto response_ = cpr::Put(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Put(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, ""});
 
   }
 
@@ -139,7 +139,7 @@ namespace gb_datahub
     std::string payload = "  {\n    \"@id\": \"xx\",\n    \"@type\": \"xx\",\n   \"episode\": \"xx\"\n  \"team\": \"xx\"\n  \"timestamp\": \"xx\"\n  \"x\": \"xx\"\n  \"y\": \"xx\"\n  \"z\": \"xx\"\n  }";
     payload = info;
 
-    auto response_ = cpr::Post(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Post(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, ""});
 
   }
 
@@ -158,7 +158,6 @@ namespace gb_datahub
     std::cout << std::endl;
     std::cout << "Status " << response_.status_code << std::endl;
 
-
     if (response_.status_code == 200) {
       return response_.text;
     }
@@ -169,7 +168,7 @@ namespace gb_datahub
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-episode3-table";
 
-    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, ""});
     //std::cout << response_.text << std::endl;
 
     if (response_.status_code == 200) {
@@ -182,7 +181,7 @@ namespace gb_datahub
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-episode3-table/"+ id;
 
-    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, ""});
     //std::cout << response_.text << std::endl;
 
     if (response_.status_code == 200) {
@@ -198,7 +197,7 @@ namespace gb_datahub
     std::string payload = "  {\n    \"@id\": \"xx\",\n    \"@type\": \"xx\",\n    \"customers\": xx,\n    \"status\": \"xx\"\n  }";
     payload = info;
 
-    auto response_ = cpr::Put(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Put(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, ""});
   }
 
   void postTable(std::string id, std::string info)
@@ -208,7 +207,7 @@ namespace gb_datahub
     std::string payload = "  {\n    \"@id\": \"xx\",\n    \"@type\": \"xx\",\n    \"customers\": xx,\n    \"status\": \"xx\"\n  }";
     payload = info;
 
-    auto response_ = cpr::Post(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Post(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, ""});
 
   }
 
@@ -216,7 +215,7 @@ namespace gb_datahub
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-episode3-table/"+ id;
 
-    auto response_ = cpr::Delete(cpr::Url{url_}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Delete(cpr::Url{url_}, cpr::Authentication{team_key_, ""});
     //std::cout << response_.text << std::endl;
 /*
     if (response_.status_code == 200) {
@@ -230,7 +229,7 @@ namespace gb_datahub
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-episode3-order";
 
-    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, ""});
     //std::cout << response_.text << std::endl;
 
     if (response_.status_code == 200) {
@@ -243,7 +242,7 @@ namespace gb_datahub
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-episode3-order/"+ id;
 
-    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, ""});
     //std::cout << response_.text << std::endl;
 
     if (response_.status_code == 200) {
@@ -259,7 +258,7 @@ namespace gb_datahub
     std::string payload = "  {\n    \"@id\": \"xx\",\n    \"@type\": \"xx\",\n    \"table\": xx,\n    \"timestamp\": \"xx\"\n  \"products\": [\n xx],\n   \"status\": xx,\n  }";
     payload = info;
 
-    auto response_ = cpr::Put(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Put(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, ""});
   }
 
   void postOrder(std::string id, std::string info)
@@ -269,7 +268,7 @@ namespace gb_datahub
     std::string payload = "  {\n    \"@id\": \"xx\",\n    \"@type\": \"xx\",\n    \"table\": xx,\n    \"timestamp\": \"xx\"\n  \"products\": [\n xx],\n   \"status\": xx,\n  }";
     payload = info;
 
-    auto response_ = cpr::Post(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Post(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, ""});
 
   }
 
@@ -277,7 +276,7 @@ namespace gb_datahub
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-episode3-order/"+ id;
 
-    auto response_ = cpr::Delete(cpr::Url{url_}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Delete(cpr::Url{url_}, cpr::Authentication{team_key_, ""});
 
   }
 
@@ -286,7 +285,7 @@ namespace gb_datahub
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/master/sciroc-episode4-shop";
 
-    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, team_id_});
+    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, ""});
     //std::cout << response_.text << std::endl;
 
     if (response_.status_code == 200) {

@@ -47,9 +47,11 @@
 #include <string>
 #include <list>
 #include <set>
+//sudo apt-get install libssh2-1 libssh2-1-dev
 
 namespace gb_datahub
 {
+
   std::string getRobotStatusList();
   std::string getRobotStatus(std::string id);
   void putRobotStatus(std::string id, std::string info);
