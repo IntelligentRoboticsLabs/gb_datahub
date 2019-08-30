@@ -41,82 +41,67 @@
 #include <vector>
 #include <set>
 
-//using namespace web::http;
-//using namespace web::http::client;
+#include <gb_datahub/gb_datahub.h>
 
-using namespace boost::network;
-using namespace boost::network::http;
 
-namespace gb_datahub
+class CoffeeShopDelivery
 {
-//sudo apt-get install libcppnetlib-dev
-CoffeeShopDelivery::CoffeeShopDelivery(): nh_(), team_id_("gentlebots"), team_key_("ea7bfa2e-77e3-4948-80b6-5b84af77a4b2")
+public:
+	CoffeeShopDelivery()
+	{
+    //nh_();
+    team_id_= "gentlebots";
+    team_key_ = "ea7bfa2e-77e3-4948-80b6-5b84af77a4b2";
+	}
+
+	~CoffeeShopDelivery()
+	{
+	}
+
+	void step()
+	{
+		ROS_INFO("[%s] step", ros::this_node::getName().c_str());
+	}
+
+protected:
+
+  ros::NodeHandle nh_;
+
+  ros::Subscriber robot_location_sub_;
+
+  std::string team_id_;
+  std::string team_key_;
+
+};
+
+
+
+int main(int argc, char** argv)
 {
 
-}
+  ros::init(argc, argv, "coffee_shop_delivery");
 
+  CoffeeShopDelivery coffee_shop_delivery;
 
-void CoffeeShopDelivery::robotStatus() //qué está haciendo el robot en ese momento  (moviéndose, hablando..), cada vez que cambia de estado se notifica
-//get put y post
-{
-  std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-robot-status/"+ id;
+  std::cout << "---------------GET-------------------" << std::endl;
+  gb_datahub::getMenu();
+  std::cout << "--------------END GET---------------" << std::endl;
 
-  client::request request_(url_);
-  request_ << header("Connection", "close");
-  client client_;
-  client::response response_ = client_.get(request_);
-  std::cout << body(response_) << std::endl;
-
-
-}
-
-void CoffeeShopDelivery::robotLocation() //get put post
-{
-  std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-robot-location/"+ id;
-  http_client client_(url_);
-
-
-}
-
-void CoffeeShopDelivery::menu() //get
-{
-  std::string url_ = "https://api.mksmart.org/sciroc-competition/master/sciroc-episode3-menu";
-  http_client client_(url_);
-
-
-}
-
-void CoffeeShopDelivery::table() //get, put, post, delete
-{
-  std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-episode3-table/"+ id;
-  http_client client_(url_);
-
-
-}
-/*
-void CoffeeShopDelivery::product()
-{
-  std::string url_ = "https://api.mksmart.org/sciroc-competition/master/sciroc-robot-location"+ id;
-  http_client client_(url_);
-
-
-}
-*/
-void CoffeeShopDelivery::order() //get put, post, delete
-{
-  std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-episode3-order/"+ id;
-  http_client client_(url_);
-
-
-}
-
-
-
-};  // namespace gb_attention
-
-int main(int argc, char** argv){
+  /*
 	ros::init(argc, argv, "coffee_shop_delivery");
+
 	CoffeeShopDelivery coffee_shop_delivery;
-	ros::spin();
+
+	ros::Rate loop_rate(1);
+	while(coffee_shop_delivery.ok())
+	{
+		coffee_shop_delivery.step();
+
+		ros::spinOnce();
+		loop_rate.sleep();
+	}
+
+*/
 	return 0;
+
 }

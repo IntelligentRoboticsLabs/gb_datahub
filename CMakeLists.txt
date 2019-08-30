@@ -44,9 +44,9 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${CPR_LIBRARIES})
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 #)
 
-#add_executable(coffee_shop_delivery src/coffee_shop_delivery.cpp)
-#add_dependencies(coffee_shop_delivery ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-#target_link_libraries(coffee_shop_delivery ${catkin_LIBRARIES} ${PROJECT_NAME} )
+add_executable(coffee_shop_delivery src/coffee_shop_delivery.cpp)
+add_dependencies(coffee_shop_delivery ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(coffee_shop_delivery ${catkin_LIBRARIES} ${PROJECT_NAME} )
 
 #add_executable(take_the_elevator src/take_the_elevator.cpp)
 #add_dependencies(take_the_elevator ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

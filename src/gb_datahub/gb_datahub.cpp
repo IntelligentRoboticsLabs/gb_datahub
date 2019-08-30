@@ -148,8 +148,13 @@ namespace gb_datahub
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/master/sciroc-episode3-menu";
 
-    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, team_id_});
-    //std::cout << response_.text << std::endl;
+    //auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_id_, team_key_});
+    auto response_ = cpr::Get(cpr::Url{url_}, cpr::Authentication{team_key_, ""});
+    //auto response_ = cpr::Get(cpr::Url{"http://www.httpbin.org/get"}, cpr::Parameters{{"hello", "world"}});
+
+    std::cout << response_.text << std::endl;
+    std::cout << response_.status_code << std::endl;
+
 
     if (response_.status_code == 200) {
       return response_.text;

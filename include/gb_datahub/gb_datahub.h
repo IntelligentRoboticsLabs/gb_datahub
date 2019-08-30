@@ -83,8 +83,8 @@ namespace gb_datahub
 
   //ros::Subscriber robot_location_sub_;
 
-  std::string team_id_;
-  std::string team_key_;
+  std::string team_id_= "gentlebots";
+  std::string team_key_ = "ea7bfa2e-77e3-4948-80b6-5b84af77a4b2";
 
 }
 

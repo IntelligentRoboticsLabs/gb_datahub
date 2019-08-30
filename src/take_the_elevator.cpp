@@ -41,58 +41,56 @@
 #include <vector>
 #include <set>
 
-using namespace web::http;
-using namespace web::http::client;
+#include <bica_graph/graph_client.h>
 
-namespace gb_datahub
+
+public:
+	TakeTheElevator()
+	{
+    nh_();
+    team_id_("gentlebots");
+    team_key_("ea7bfa2e-77e3-4948-80b6-5b84af77a4b2");
+	}
+
+	~TakeTheElevator()
+	{
+	}
+
+	void step()
+	{
+		ROS_INFO("[%s] step", ros::this_node::getName().c_str());
+	}
+
+protected:
+
+  ros::NodeHandle nh_;
+  bica_graph::GraphClient graph_;
+
+  ros::Subscriber robot_location_sub_;
+
+  std::string team_id_;
+  std::string team_key_;
+
+
+};
+
+
+int main(int argc, char** argv)
 {
-
-TakeTheElevator::TakeTheElevator(): nh_(), team_id_("gentlebots"), team_key_("ea7bfa2e-77e3-4948-80b6-5b84af77a4b2")
-{
-
-}
-
-
-void TakeTheElevator::robotStatus() // get, post y put
-{
-  std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-robot-status/"+ id;
-  http_client client_(url_);
-
-}
-
-void TakeTheElevator::robotLocation() // get, post, put
-{
-  std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-robot-location/"+ id;
-  http_client client_(url_);
-
-}
-
-void TakeTheElevator::shopList() //get
-{
-  std::string url_ = "https://api.mksmart.org/sciroc-competition/master/sciroc-episode4-shop"
-  http_client client_(url_);
-/*
-  http_response response_;
-  response_ = client.request(methods::GET, "/get").get();
-  std::cout << response_.extract_string().get() << "\n";
-
-*/
-}
-/*
-void TakeTheElevator::identifyGoal()
-{
-
-
-}
-*/
-}
-
-};  // namespace gb_attention
-
-
-int main(int argc, char** argv){
 	ros::init(argc, argv, "take_the_elevator");
+
 	TakeTheElevator take_the_elevator;
-	ros::spin();
+
+	ros::Rate loop_rate(1);
+
+	while(take_the_elevator.ok())
+	{
+		take_the_elevator.step();
+
+		ros::spinOnce();
+		loop_rate.sleep();
+	}
+
+
 	return 0;
 }
