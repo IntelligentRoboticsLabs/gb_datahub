@@ -22,6 +22,8 @@ include_directories(
 
 SET(USE_SYSTEM_GTEST ON)
 SET(BUILD_CPR_TESTS OFF)
+SET(USE_SYSTEM_CURL ON)
+
 add_subdirectory(cpr)
 
 set(GB_DATAHUB_SRCS
