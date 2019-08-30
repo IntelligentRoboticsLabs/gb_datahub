@@ -87,6 +87,20 @@ int main(int argc, char** argv)
   gb_datahub::getMenu();
   std::cout << "--------------END GET---------------" << std::endl;
 
+	std::cout << "---------------POST-------------------" << std::endl;
+	std::string post_ = "  {\n    \"@id\": \"TABLE0\",\n    \"@type\": \"Table\",\n    \"customers\": 2,\n    \"status\": \"Ready\"\n  }";
+  gb_datahub::postTable("TABLE0", post_);
+  std::cout << "--------------END POST---------------" << std::endl;
+
+	std::cout << "---------------PUT-------------------" << std::endl;
+	std::string put_ = "  {\n    \"@id\": \"TABLE0\",\n    \"@type\": \"Table\",\n    \"customers\": 2,\n    \"status\": \"Ready\"\n  }";
+	gb_datahub::putTable("TABLE0", put_);
+	std::cout << "--------------END PUT---------------" << std::endl;
+
+	std::cout << "---------------DELETE-------------------" << std::endl;
+	gb_datahub::deleteTable("TABLE0");
+	std::cout << "--------------END DELETE---------------" << std::endl;
+
   /*
 	ros::init(argc, argv, "coffee_shop_delivery");
 
