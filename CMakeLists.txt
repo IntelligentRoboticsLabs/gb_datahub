@@ -25,6 +25,8 @@ SET(BUILD_CPR_TESTS OFF)
 SET(USE_SYSTEM_CURL ON)
 
 add_subdirectory(cpr)
+add_subdirectory(json)
+
 
 set(GB_DATAHUB_SRCS
   src/${PROJECT_NAME}/gb_datahub.cpp
@@ -34,11 +36,9 @@ set(GB_DATAHUB_HDRS
   include/${PROJECT_NAME}/gb_datahub.h
 )
 
-
-
 add_library(${PROJECT_NAME} ${GB_DATAHUB_SRCS})
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${CPR_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${CPR_LIBRARIES} nlohmann_json::nlohmann_json)
 
 #install(TARGETS ${PROJECT_NAME}
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

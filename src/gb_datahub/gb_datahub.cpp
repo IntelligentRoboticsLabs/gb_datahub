@@ -42,7 +42,9 @@
 #include <set>
 
 #include <gb_datahub/gb_datahub.h>
+#include <typeinfo>
 
+using json = nlohmann::json;
 
 namespace gb_datahub
 {
@@ -81,22 +83,30 @@ namespace gb_datahub
     return "";
   }
 
-  void putRobotStatus(std::string id, std::string info)
+  void putRobotStatus(std::string id, robotStatus robotStatus_)
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-robot-status/"+ id;
-//payload example
     std::string payload = "  {\n    \"@id\": \"xx\",\n    \"@type\": \"xx\",\n    \"message\": xx,\n    \"episode\": \"xx\"\n  \"team\": \"xx\"\n  \"timestamp\": \"xx\"\n  \"x\": \"xx\"\n  \"y\": \"xx\"\n  \"z\": \"xx\"\n  }";
-    payload = info;
 
-    auto response_ = cpr::Put(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, ""});
+    json j = robotStatusToJson(robotStatus_);
+    std::string info = j.dump();
 
+    cpr::Session session;
+    session.SetVerifySsl(false);
+    session.SetUrl(url_);
+    session.SetBody(cpr::Body{info});
+    session.SetAuth(cpr::Authentication{team_key_, ""});
+    auto response_ = session.Put();
   }
 
-  void postRobotStatus(std::string id, std::string info)
+  void postRobotStatus(std::string id, robotStatus robotStatus_)
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-robot-status/"+ id;
 
     std::string payload = "  {\n    \"@id\": \"xx\",\n    \"@type\": \"xx\",\n    \"message\": xx,\n    \"episode\": \"xx\"\n  \"team\": \"xx\"\n  \"timestamp\": \"xx\"\n  \"x\": \"xx\"\n  \"y\": \"xx\"\n  \"z\": \"xx\"\n  }";
+
+    json j = robotStatusToJson(robotStatus_);
+    std::string info = j.dump();
 
     cpr::Session session;
     session.SetVerifySsl(false);
@@ -141,22 +151,32 @@ namespace gb_datahub
     return "";
   }
 
-  void putRobotLocation(std::string id, std::string info)
+  void putRobotLocation(std::string id, robotLocation robotLocation_)
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-robot-location/"+id;
 
     std::string payload = "  {\n    \"@id\": \"xx\",\n    \"@type\": \"xx\",\n   \"episode\": \"xx\"\n  \"team\": \"xx\"\n  \"timestamp\": \"xx\"\n  \"x\": \"xx\"\n  \"y\": \"xx\"\n  \"z\": \"xx\"\n  }";
-    payload = info;
 
-    auto response_ = cpr::Put(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, ""});
+    json j = robotLocationToJson(robotLocation_);
+    std::string info = j.dump();
+
+    cpr::Session session;
+    session.SetVerifySsl(false);
+    session.SetUrl(url_);
+    session.SetBody(cpr::Body{info});
+    session.SetAuth(cpr::Authentication{team_key_, ""});
+    auto response_ = session.Put();
 
   }
 
-  void postRobotLocation(std::string id, std::string info)
+  void postRobotLocation(std::string id, robotLocation robotLocation_)
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-robot-location/"+id;
 
     std::string payload = "  {\n    \"@id\": \"xx\",\n    \"@type\": \"xx\",\n   \"episode\": \"xx\"\n  \"team\": \"xx\"\n  \"timestamp\": \"xx\"\n  \"x\": \"xx\"\n  \"y\": \"xx\"\n  \"z\": \"xx\"\n  }";
+
+    json j = robotLocationToJson(robotLocation_);
+    std::string info = j.dump();
 
     cpr::Session session;
     session.SetVerifySsl(false);
@@ -181,6 +201,10 @@ namespace gb_datahub
     std::cout << "Text " << response_.text << std::endl;
     std::cout << std::endl;
     std::cout << "Status " << response_.status_code << std::endl;
+
+    auto json = json::parse(response_.text);
+
+    std::cout << json[0]["@id"] << std::endl;
 
     if (response_.status_code == 200) {
       return response_.text;
@@ -222,11 +246,14 @@ namespace gb_datahub
     return "";
   }
 
-  void putTable(std::string id, std::string info)
+  void putTable(std::string id, table table_)
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-episode3-table/"+ id;
 
     std::string payload = "  {\n    \"@id\": \"xx\",\n    \"@type\": \"xx\",\n    \"customers\": xx,\n    \"status\": \"xx\"\n  }";
+
+    json j = tableToJson(table_);
+    std::string info = j.dump();
 
     cpr::Session session;
     session.SetVerifySsl(false);
@@ -238,9 +265,12 @@ namespace gb_datahub
     std::cout << response_.status_code << std::endl;
   }
 
-  void postTable(std::string id, std::string info)
+  void postTable(std::string id, table table_)
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-episode3-table/"+ id;
+
+    json j = tableToJson(table_);
+    std::string info = j.dump();
 
     cpr::Session session;
     session.SetVerifySsl(false);
@@ -299,21 +329,31 @@ namespace gb_datahub
     return "";
    }
 
-  void putOrder(std::string id, std::string info)
+  void putOrder(std::string id, order order_)
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-episode3-order/"+ id;
 
     std::string payload = "  {\n    \"@id\": \"xx\",\n    \"@type\": \"xx\",\n    \"table\": xx,\n    \"timestamp\": \"xx\"\n  \"products\": [\n xx],\n   \"status\": xx,\n  }";
-    payload = info;
 
-    auto response_ = cpr::Put(cpr::Url{url_}, cpr::Payload{{"data",payload}}, cpr::Authentication{team_key_, ""});
+    json j = orderToJson(order_);
+    std::string info = j.dump();
+
+    cpr::Session session;
+    session.SetVerifySsl(false);
+    session.SetUrl(url_);
+    session.SetBody(cpr::Body{info});
+    session.SetAuth(cpr::Authentication{team_key_, ""});
+    auto response_ = session.Put();
   }
 
-  void postOrder(std::string id, std::string info)
+  void postOrder(std::string id, order order_)
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-episode3-order/"+ id;
 
     std::string payload = "  {\n    \"@id\": \"xx\",\n    \"@type\": \"xx\",\n    \"table\": xx,\n    \"timestamp\": \"xx\"\n  \"products\": [\n xx],\n   \"status\": xx,\n  }";
+
+    json j = orderToJson(order_);
+    std::string info = j.dump();
 
     cpr::Session session;
     session.SetVerifySsl(false);
@@ -321,7 +361,6 @@ namespace gb_datahub
     session.SetBody(cpr::Body{info});
     session.SetAuth(cpr::Authentication{team_key_, ""});
     auto response_ = session.Post();
-
 
   }
 
@@ -349,12 +388,263 @@ namespace gb_datahub
     session.SetUrl(url_);
     session.SetAuth(cpr::Authentication{team_key_, ""});
     auto response_ = session.Get();
-    std::cout << response_.text << std::endl;
+
+    auto json = json::parse(response_.text);
+
+    //std::cout << response_.text << std::endl;
+    //std::cout << json << std::endl;
+
+    /*
+    auto a = json.dump(4);
+    std::cout << json[0]["@id"] << std::endl;
+    std::cout << json["@id"] << std::endl;
+*/
+
+    //std::cout << json[0] << std::endl;
 
     if (response_.status_code == 200) {
       return response_.text;
     }
+
     return "";
+  }
+
+  /////////////////////////JSON/////////////////////////////
+
+  robotStatus robotStatusJsonToObject(std::string info)
+  {
+    auto json = json::parse(info);
+
+    robotStatus robotStatus_;
+
+    robotStatus_.id = json["@id"];
+    robotStatus_.type = json["@type"];
+    robotStatus_.message = json["message"];
+    robotStatus_.episode = json["episode"];
+    robotStatus_.team = json["team"];
+    robotStatus_.timestamp = json["timestamp"];
+    robotStatus_.x = json["x"];
+    robotStatus_.y = json["y"];
+    robotStatus_.z = json["z"];
+
+    return robotStatus_;
+  }
+
+  robotLocation robotLocationJsonToObject(std::string info)
+  {
+    auto json = json::parse(info);
+
+    robotLocation robotLocation_;
+
+    robotLocation_.id = json["@id"];
+    robotLocation_.type = json["@type"];
+    robotLocation_.episode = json["episode"];
+    robotLocation_.team = json["team"];
+    robotLocation_.timestamp = json["timestamp"];
+    robotLocation_.x = json["x"];
+    robotLocation_.y = json["y"];
+    robotLocation_.z = json["z"];
+
+    return robotLocation_;
+  }
+
+  table tableJsonToObject(std::string info)
+  {
+    auto json = json::parse(info);
+
+    table table_;
+
+    table_.id = json["@id"];
+    table_.type = json["@type"];
+    table_.customers = json["customers"];
+    table_.status = json["status"];
+
+    return table_;
+  }
+
+  product productTextToObject(std::string info)
+  {
+    auto json = json::parse(info);
+    product product_;
+
+    product_.id = json["@id"];
+    product_.type = json["@type"];
+    product_.label = json["label"];
+    product_.descriptions = json["descriptions"];
+    product_.price = json["price"];
+
+    return product_;
+  }
+
+  product productJsonToObject(json json)
+  {
+    product product_;
+
+    product_.id = json["@id"];
+    product_.type = json["@type"];
+    product_.label = json["label"];
+    product_.descriptions = json["descriptions"];
+    product_.price = json["price"];
+
+    return product_;
+  }
+
+  order orderJsonToObject(std::string info)
+  {
+    auto json = json::parse(info);
+
+    order order_;
+
+    order_.id = json["@id"];
+    order_.type = json["@type"];
+    order_.table = json["tavle"];
+    order_.timestamp = json["timestamp"];
+
+    std::vector<product> products_;
+    for(int i=0; i< json["products"].size(); i++)
+    {
+      /*
+      products_[i].id = json[i]["products"]["@id"];
+      products_[i].type = json[i]["products"]["@type"];
+      products_[i].label = json[i]["products"]["label"];
+      products_[i].descriptions = json[i]["descriptions"];
+      products_[i].price = json[i]["products"]["price"];
+*/
+      product p = productJsonToObject(json["products"][i]);
+      products_.push_back(p);
+    }
+
+    order_.products =products_;
+    order_.status = json["status"];
+
+    return order_;
+  }
+
+  menu menuJsonToObject(std::string info)
+  {
+    auto json = json::parse(info);
+
+    menu menu_;
+
+    menu_.id = json[0]["@id"];
+    menu_.type = json[0]["@type"];
+
+    std::vector<product> products_;
+
+    for(int i=0; i< json[0]["products"].size(); i++)
+    {
+
+      product p = productJsonToObject(json[0]["products"][i]);
+      products_.push_back(p);
+
+    }
+    menu_.products = products_;
+
+    return menu_;
+  }
+
+  std::vector<shop> shopJsonToObject(std::string info)
+  {
+    auto json = json::parse(info);
+
+    std::vector<shop> shopList;
+    std::cout << json.size() << std::endl;
+
+    for(int i=0; i< json.size(); i++)
+    {
+      shop shop_;
+
+      shop_.id = json[i]["@id"];
+      shop_.type = json[i]["@type"];
+      shop_.floor = json[i]["floor"];
+      shop_.description = json[i]["description"];
+      shop_.goal = json[i]["goal"];
+
+      shopList.push_back(shop_);
+
+    }
+
+    return shopList;
+  }
+
+  json robotStatusToJson(robotStatus robotStatus_)
+  {
+    json json;
+
+    json["@id"] = robotStatus_.id;
+    json["@type"] = robotStatus_.type;
+    json["message"] = robotStatus_.message;
+    json["episode"] = robotStatus_.episode;
+    json["team"] = robotStatus_.team;
+    json["timestamp"] = robotStatus_.timestamp;
+    json["x"] = robotStatus_.x;
+    json["y"] = robotStatus_.y;
+    json["z"] = robotStatus_.z;
+
+    return json;
+  }
+
+  json robotLocationToJson(robotLocation robotLocation_)
+  {
+    json json;
+
+    json["@id"] = robotLocation_.id;
+    json["@type"] = robotLocation_.type;
+    json["episode"] = robotLocation_.episode;
+    json["team"] = robotLocation_.team;
+    json["timestamp"] = robotLocation_.timestamp;
+    json["x"] = robotLocation_.x;
+    json["y"] = robotLocation_.y;
+    json["z"] = robotLocation_.z;
+
+    return json;
+  }
+
+  json tableToJson(table table_)
+  {
+    json json;
+
+    json["@id"] = table_.id;
+    json["@type"] = table_.type;
+    json["customers"] = table_.customers;
+    json["status"] = table_.status;
+
+    return json;
+  }
+
+  json productToJson(product product_)
+  {
+    json json;
+
+    json["@id"] = product_.id;
+    json["@type"] = product_.type;
+    json["label"] = product_.label;
+    json["descriptions"] = product_.descriptions;
+    json["price"] = product_.price;
+
+
+    return json;
+  }
+
+  json orderToJson(order order_)
+  {
+    json json;
+
+    json["@id"] = order_.id;
+    json["@type"] = order_.type;
+    json["table"] = order_.table;
+    json["timestamp"] = order_.timestamp;
+    //json["products"] = order_.products;
+    //rellenar esto
+    json["staus"] = order_.status;
+
+    return json;
+  }
+
+  void prettyJson(std::string info)
+  {
+    auto json = json::parse(info);
+    std::cout << json.dump(4) << std::endl;
   }
 
 

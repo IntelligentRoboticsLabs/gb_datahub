@@ -43,48 +43,122 @@
 
 #include <cpr/cpr.h>
 
-//#include <json.hpp>
-
+#include <nlohmann/json.hpp>
 #include <string>
 #include <list>
 #include <set>
-//sudo apt-get install libssh2-1 libssh2-1-dev
+
+using json = nlohmann::json;
+
+struct robotStatus {
+  std::string id;
+  std::string type;
+  std::string message;
+  std::string episode;
+  std::string team;
+  std::string timestamp;
+  int x;
+  int y;
+  int z;
+};
+
+struct robotLocation {
+  std::string id;
+  std::string type;
+  std::string episode;
+  std::string team;
+  std::string timestamp;
+  int x;
+  int y;
+  int z;
+};
+
+struct table {
+  std::string id;
+  std::string type;
+  int customers;
+  std::string status;
+};
+
+struct product {
+  std::string id;
+  std::string type;
+  std::string label;
+  std::string descriptions;
+  std::string price;
+};
+
+struct order {
+  std::string id;
+  std::string type;
+  std::string table;
+  std::string timestamp;
+  std::vector<product> products;
+  std::string status;
+};
+
+struct menu {
+  std::string id;
+  std::string type;
+  std::vector<product> products;
+};
+
+struct shop {
+  std::string id;
+  std::string type;
+  int floor;
+  std::string description;
+  bool goal;
+};
+
 
 namespace gb_datahub
 {
 
   std::string getRobotStatusList();
   std::string getRobotStatus(std::string id);
-  void putRobotStatus(std::string id, std::string info);
-  void postRobotStatus(std::string id, std::string info);
+  void putRobotStatus(std::string id, robotStatus robotStatus_);
+  void postRobotStatus(std::string id, robotStatus robotStatus_);
 
   std::string getRobotLocationList();
   std::string getRobotLocation(std::string id);
-  void putRobotLocation(std::string id, std::string info);
-  void postRobotLocation(std::string id, std::string info);
+  void putRobotLocation(std::string id, robotLocation robotLocation_);
+  void postRobotLocation(std::string id, robotLocation robotLocation_);
 
 // Episode3
   std::string getMenu();
   std::string getTable();
   std::string getTable(std::string id);
-  void putTable(std::string id, std::string info);
-  void postTable(std::string id, std::string info);
+  void putTable(std::string id, table table_);
+  void postTable(std::string id, table table_);
   void deleteTable(std::string id);
   std::string getOrder();
   std::string getOrder(std::string id);
-  void putOrder(std::string id, std::string info);
-  void postOrder(std::string id, std::string info);
+  void putOrder(std::string id, order order_);
+  void postOrder(std::string id, order order_);
   void deleteOrder(std::string id);
 
 // Episode4
 
   std::string getShopList();
 
-//////////////////////////////////
-  //ros::NodeHandle nh_;
-//  bica_graph::GraphClient graph_;
+// JSON
+  robotStatus robotStatusJsonToObject(std::string info);
+  robotLocation robotLocationJsonToObject(std::string info);
+  table tableJsonToObject(std::string info);
+  product productTextToObject(std::string info);
+  product productJsonToObject(json json);
+  order orderJsonToObject(std::string info);
+  menu menuJsonToObject(std::string info);
+  std::vector<shop> shopJsonToObject(std::string info);
+  void prettyJson(std::string info);
 
-  //ros::Subscriber robot_location_sub_;
+  json robotStatusToJson(robotStatus robotStatus_);
+  json robotLocationToJson(robotLocation robotLocation_);
+  json tableToJson(table table_);
+  json productToJson(product product_);
+  json orderToJson(order order_);
+
 
   std::string team_id_= "gentlebots";
   std::string team_key_ = "ea7bfa2e-77e3-4948-80b6-5b84af77a4b2";
