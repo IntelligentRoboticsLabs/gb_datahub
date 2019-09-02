@@ -349,7 +349,7 @@ namespace gb_datahub
     session.SetUrl(url_);
     session.SetAuth(cpr::Authentication{team_key_, ""});
     auto response_ = session.Get();
-    //std::cout << response_.text << std::endl;
+    std::cout << response_.text << std::endl;
 
     if (response_.status_code == 200) {
       return response_.text;

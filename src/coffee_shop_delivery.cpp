@@ -49,7 +49,6 @@ class CoffeeShopDelivery
 public:
 	CoffeeShopDelivery()
 	{
-    //nh_();
     team_id_= "gentlebots";
     team_key_ = "ea7bfa2e-77e3-4948-80b6-5b84af77a4b2";
 	}
@@ -83,23 +82,23 @@ int main(int argc, char** argv)
 
   CoffeeShopDelivery coffee_shop_delivery;
 
-  std::cout << "---------------GET-------------------" << std::endl;
+  std::cout << "---------------GET MENU-------------------" << std::endl;
   gb_datahub::getMenu();
-  std::cout << "--------------END GET---------------" << std::endl;
+  std::cout << "--------------END GET MENU---------------" << std::endl;
 
-	std::cout << "---------------POST-------------------" << std::endl;
-	std::string post_ = "  {\n    \"@id\": \"TABLE0\",\n    \"@type\": \"Table\",\n    \"customers\": 2,\n    \"status\": \"Ready\"\n  }";
-  gb_datahub::postTable("TABLE0", post_);
-  std::cout << "--------------END POST---------------" << std::endl;
+	std::cout << "---------------POST TABLE-------------------" << std::endl;
+	std::string post_ = "  {\n    \"@id\": \"TABLE1\",\n    \"@type\": \"Table\",\n    \"customers\": 2,\n    \"status\": \"Ready\"\n  }";
+  gb_datahub::postTable("TABLE1", post_);
+  std::cout << "--------------END POST TABLE---------------" << std::endl;
 
-	std::cout << "---------------PUT-------------------" << std::endl;
+	std::cout << "---------------PUT TABLE-------------------" << std::endl;
 	std::string put_ = "  {\n    \"@id\": \"TABLE0\",\n    \"@type\": \"Table\",\n    \"customers\": 2,\n    \"status\": \"Ready\"\n  }";
 	gb_datahub::putTable("TABLE0", put_);
-	std::cout << "--------------END PUT---------------" << std::endl;
+	std::cout << "--------------END PUT TABLE---------------" << std::endl;
 
-	std::cout << "---------------DELETE-------------------" << std::endl;
+	std::cout << "---------------DELETE TABLE-------------------" << std::endl;
 	gb_datahub::deleteTable("TABLE0");
-	std::cout << "--------------END DELETE---------------" << std::endl;
+	std::cout << "--------------END DELETE TABLE---------------" << std::endl;
 
   /*
 	ros::init(argc, argv, "coffee_shop_delivery");

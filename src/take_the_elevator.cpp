@@ -41,15 +41,15 @@
 #include <vector>
 #include <set>
 
-#include <bica_graph/graph_client.h>
+#include <gb_datahub/gb_datahub.h>
 
-
+class TakeTheElevator
+{
 public:
 	TakeTheElevator()
 	{
-    nh_();
-    team_id_("gentlebots");
-    team_key_("ea7bfa2e-77e3-4948-80b6-5b84af77a4b2");
+    team_id_= "gentlebots";
+    team_key_ = "ea7bfa2e-77e3-4948-80b6-5b84af77a4b2";
 	}
 
 	~TakeTheElevator()
@@ -63,11 +63,6 @@ public:
 
 protected:
 
-  ros::NodeHandle nh_;
-  bica_graph::GraphClient graph_;
-
-  ros::Subscriber robot_location_sub_;
-
   std::string team_id_;
   std::string team_key_;
 
@@ -80,7 +75,7 @@ int main(int argc, char** argv)
 	ros::init(argc, argv, "take_the_elevator");
 
 	TakeTheElevator take_the_elevator;
-
+/*
 	ros::Rate loop_rate(1);
 
 	while(take_the_elevator.ok())
@@ -91,6 +86,10 @@ int main(int argc, char** argv)
 		loop_rate.sleep();
 	}
 
+*/
+	std::cout << "---------------GET SHOP LIST-------------------" << std::endl;
+	gb_datahub::getShopList();
+	std::cout << "--------------END GET SHOP LIST---------------" << std::endl;
 
 	return 0;
 }
