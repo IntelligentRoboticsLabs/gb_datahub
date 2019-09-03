@@ -53,3 +53,7 @@ target_link_libraries(coffee_shop_delivery ${catkin_LIBRARIES} ${PROJECT_NAME} )
 add_executable(take_the_elevator src/take_the_elevator.cpp)
 add_dependencies(take_the_elevator ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(take_the_elevator ${catkin_LIBRARIES} ${PROJECT_NAME} )
+
+add_executable(datahub_tests src/datahub_tests.cpp)
+add_dependencies(datahub_tests ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(datahub_tests ${catkin_LIBRARIES} ${PROJECT_NAME} )
