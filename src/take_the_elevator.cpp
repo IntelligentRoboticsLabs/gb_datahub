@@ -75,23 +75,15 @@ int main(int argc, char** argv)
 	ros::init(argc, argv, "take_the_elevator");
 
 	TakeTheElevator take_the_elevator;
-/*
-	ros::Rate loop_rate(1);
 
-	while(take_the_elevator.ok())
-	{
-		take_the_elevator.step();
-
-		ros::spinOnce();
-		loop_rate.sleep();
-	}
-
-*/
 	std::cout << "---------------GET SHOP LIST-------------------" << std::endl;
-	std::string info = gb_datahub::getShopList();
-	gb_datahub::prettyJson(info);
-	gb_datahub::shopJsonToObject(info);
-	//gb_datahub::prettyJson(info);
+	std::vector<shop> sh = gb_datahub::getShopList();
+	/*
+	std::cout << sh[0].id << std::endl;
+	std::cout << sh[1].id << std::endl;
+	std::cout << sh[2].id << std::endl;
+	*/
+
 	std::cout << "--------------END GET SHOP LIST---------------" << std::endl;
 
 	return 0;

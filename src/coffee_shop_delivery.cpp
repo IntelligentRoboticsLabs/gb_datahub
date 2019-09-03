@@ -84,65 +84,69 @@ int main(int argc, char** argv)
   CoffeeShopDelivery coffee_shop_delivery;
 
   std::cout << "---------------GET MENU-------------------" << std::endl;
-  std::string info = gb_datahub::getMenu();
-	menu m = gb_datahub::menuJsonToObject(info);
-	/*
+  menu m = gb_datahub::getMenu();
+/*
 	std::cout << m.id << std::endl;
 	std::cout << m.type << std::endl;
 	for(int i=0; i< m.products.size(); i++){
 		std::cout << m.products[i].id << std::endl;
 	}
 	*/
-	//gb_datahub::prettyJson(info);
   std::cout << "--------------END GET MENU---------------" << std::endl;
-/*
+
 	std::cout << "---------------POST TABLE-------------------" << std::endl;
 	std::string post_ = "  {\n    \"@id\": \"TABLE1\",\n    \"@type\": \"Table\",\n    \"customers\": 2,\n    \"status\": \"Ready\"\n  }";
-  gb_datahub::postTable("TABLE1", post_);
-  std::cout << "--------------END POST TABLE---------------" << std::endl;
 
+	table t;
+	t.id = "TABLE78";
+	t.type = "Table";
+	t.customers = 2;
+	t.status = "Ready";
+
+	int v = gb_datahub::postTable(t);
+	//std::cout << v << std::endl;
+
+  std::cout << "--------------END POST TABLE---------------" << std::endl;
+/*
 	std::cout << "---------------PUT TABLE-------------------" << std::endl;
 	std::string put_ = "  {\n    \"@id\": \"TABLE0\",\n    \"@type\": \"Table\",\n    \"customers\": 2,\n    \"status\": \"Ready\"\n  }";
-	gb_datahub::putTable("TABLE0", put_);
+	gb_datahub::putTable(t);
 	std::cout << "-------------json[0]["@id"]-END PUT TABLE---------------" << std::endl;
 
 	std::cout << "---------------DELETE TABLE-------------------" << std::endl;
-	gb_datahub::deleteTable("TABLE0");
+	gb_datahub::deleteTable(t.id);
 	std::cout << "--------------END DELETE TABLE---------------" << std::endl;
 */
 
-std::string post_ = "  {\n    \"@id\": \"TABLE1\",\n    \"@type\": \"Table\",\n    \"customers\": 2,\n    \"status\": \"Ready\"\n  }";
 
+///test table
+//std::string post_ = "  {\n    \"@id\": \"TABLE1\",\n    \"@type\": \"Table\",\n    \"customers\": 2,\n    \"status\": \"Ready\"\n  }";
 //gb_datahub::tableJsonToObject(post_);
 
-table t;
-t.id = "TABLE71";
-t.type = "Table";
-t.customers = 2;
-t.status = "Ready";
 
-json j = gb_datahub::tableToJson(t);
+std::cout <<"______" << std::endl;
 
-//gb_datahub::putTable(t.id, t);
+std::string or_ = "{\"@id\": \"ORDER1\",    \"@type\": \"Order\",    \"table\": \"Table1\",    \"timestamp\": \"2019-09-03T08:06:04.818Z\",  \"products\": [ \"coke\", \"fanta\" ],   \"status\": \"Pending\" }";
 
-//gb_datahub::postTable(t.id, t);
-
-
-  /*
-	ros::init(argc, argv, "coffee_shop_delivery");
-
-	CoffeeShopDelivery coffee_shop_delivery;
-
-	ros::Rate loop_rate(1);
-	while(coffee_shop_delivery.ok())
-	{
-		coffee_shop_delivery.step();
-
-		ros::spinOnce();
-		loop_rate.sleep();
-	}
-
+order o = gb_datahub::orderJsonToObject(or_);
+/*
+std::vector<std::string> vec;
+vec.push_back("coke");
+vec.push_back("fanta");
+order o;
+o.id = "Order1";
+o.type = "Order";
+o.table = "table1";
+o.timestamp ="2019-09-03T08:06:04.818Z";
+o.products = vec;
+o.status = "pending";
 */
+
+	json j2 = gb_datahub::orderToJson(o);
+
+	std::cout << j2.dump(4) << std::endl;
+	std::cout <<"______" << std::endl;
+
 	return 0;
 
 }

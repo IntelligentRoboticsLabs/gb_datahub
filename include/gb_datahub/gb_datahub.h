@@ -93,7 +93,7 @@ struct order {
   std::string type;
   std::string table;
   std::string timestamp;
-  std::vector<product> products;
+  std::vector<std::string> products;
   std::string status;
 };
 
@@ -115,40 +115,44 @@ struct shop {
 namespace gb_datahub
 {
 
-  std::string getRobotStatusList();
-  std::string getRobotStatus(std::string id);
-  void putRobotStatus(std::string id, robotStatus robotStatus_);
-  void postRobotStatus(std::string id, robotStatus robotStatus_);
+  std::vector<robotStatus> getRobotStatusList();
+  robotStatus getRobotStatus(std::string id);
+  int putRobotStatus(robotStatus robotStatus_);
+  int postRobotStatus(robotStatus robotStatus_);
 
-  std::string getRobotLocationList();
-  std::string getRobotLocation(std::string id);
-  void putRobotLocation(std::string id, robotLocation robotLocation_);
-  void postRobotLocation(std::string id, robotLocation robotLocation_);
+  std::vector<robotLocation> getRobotLocationList();
+  robotLocation getRobotLocation(std::string id);
+  int putRobotLocation(robotLocation robotLocation_);
+  int postRobotLocation(robotLocation robotLocation_);
 
 // Episode3
-  std::string getMenu();
-  std::string getTable();
-  std::string getTable(std::string id);
-  void putTable(std::string id, table table_);
-  void postTable(std::string id, table table_);
-  void deleteTable(std::string id);
-  std::string getOrder();
-  std::string getOrder(std::string id);
-  void putOrder(std::string id, order order_);
-  void postOrder(std::string id, order order_);
-  void deleteOrder(std::string id);
+  menu getMenu();
+  std::vector<table> getTableList();
+  table getTable(std::string id);
+  int putTable(table table_);
+  int postTable(table table_);
+  int deleteTable(std::string id);
+  std::vector<order> getOrderList();
+  order getOrder(std::string id);
+  int putOrder(order order_);
+  int postOrder(order order_);
+  int deleteOrder(std::string id);
 
 // Episode4
 
-  std::string getShopList();
+  std::vector<shop> getShopList();
 
 // JSON
+  std::vector<robotStatus> robotStatusListJsonToObject(std::string info);
   robotStatus robotStatusJsonToObject(std::string info);
+  std::vector<robotLocation> robotLocationListJsonToObject(std::string info);
   robotLocation robotLocationJsonToObject(std::string info);
+  std::vector<table> tableListJsonToObject(std::string info);
   table tableJsonToObject(std::string info);
   product productTextToObject(std::string info);
   product productJsonToObject(json json);
   order orderJsonToObject(std::string info);
+  std::vector<order> orderListJsonToObject(std::string info);
   menu menuJsonToObject(std::string info);
   std::vector<shop> shopJsonToObject(std::string info);
   void prettyJson(std::string info);
