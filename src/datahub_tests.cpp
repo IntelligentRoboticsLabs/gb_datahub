@@ -149,7 +149,7 @@ o.status = "pending";
 
 
 	std::cout << "---------------GET SHOP LIST-------------------" << std::endl;
-	std::vector<shop> sh = gb_datahub::getShopList();
+	std::vector<shop> sh = gb_datahub::getShopsList();
 	/*
 		std::cout << sh[0].id << std::endl;
 		std::cout << sh[1].id << std::endl;

@@ -365,7 +365,7 @@ namespace gb_datahub
   }
 
   // Episode4
-  std::vector<shop> getShopList()
+  std::vector<shop> getShopsList()
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/master/sciroc-episode4-shop";
 

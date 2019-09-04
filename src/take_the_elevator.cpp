@@ -41,31 +41,124 @@
 #include <vector>
 #include <set>
 
+#include "ros/ros.h"
+#include <tf/transform_broadcaster.h>
+#include <tf/transform_listener.h>
+#include <tf/tfMessage.h>
+#include <geometry_msgs/PoseStamped.h>
+#include "boost/date_time/posix_time/posix_time.hpp"
+
 #include <gb_datahub/gb_datahub.h>
+#include <gb_datahub/GetShopsList.h>
+#include <gb_datahub/Shop.h>
 
 class TakeTheElevator
 {
 public:
 	TakeTheElevator()
 	{
-    team_id_= "gentlebots";
-    team_key_ = "ea7bfa2e-77e3-4948-80b6-5b84af77a4b2";
+		srv_ = nh_.advertiseService("/gb_datahub/shops", &TakeTheElevator::getShopsList, this);
+		//tf_sub_ = nh_.subscribe("/tf", 1, &TakeTheElevator::tfCallback, this);
 	}
 
 	~TakeTheElevator()
 	{
 	}
 
-	void step()
+	geometry_msgs::PoseStamped stampedTransform2poseStamped(tf::StampedTransform bf2map)
+	{
+
+		geometry_msgs::PoseStamped ps_;
+		geometry_msgs::Quaternion quat_;
+		geometry_msgs::Point point_;
+		tf::Quaternion tf_quat_;
+		tf::Vector3 vect_;
+
+		tf_quat_ = bf2map.getRotation();
+		quat_.x = tf_quat_.x();
+		quat_.y = tf_quat_.y();
+		quat_.z = tf_quat_.z();
+		quat_.w = tf_quat_.w();
+		ps_.pose.orientation = quat_;
+
+		vect_ = bf2map.getOrigin();
+		point_.x = vect_.getX();
+		point_.y = vect_.getY();
+		point_.z = vect_.getZ();
+		ps_.pose.position = point_;
+		ps_.header.frame_id = bf2map.frame_id_;
+		ps_.header.stamp = bf2map.stamp_;
+
+		return ps_;
+	}
+
+	void poseCallback(tf::StampedTransform& bf2map)
+	{
+		geometry_msgs::PoseStamped ps_;
+
+		try
+		{
+			tf_listener_.lookupTransform("/base_footprint", "/map", ros::Time(0), bf2map);
+
+			ps_ = stampedTransform2poseStamped(bf2map);
+
+			//pose_pub_.publish(ps_);
+			robotLocation robotLocation_;
+			robotLocation_.id = ps_.header.seq;
+			robotLocation_.type = "RobotLocation";
+			robotLocation_.episode = "episode4";
+			robotLocation_.team = gb_datahub::team_id_;
+			robotLocation_.timestamp = boost::posix_time::to_iso_extended_string(ps_.header.stamp.toBoost());
+			robotLocation_.x = ps_.pose.position.x;
+			robotLocation_.y = ps_.pose.position.y;
+			robotLocation_.z = ps_.pose.position.z;
+
+			gb_datahub::postRobotLocation(robotLocation_);
+
+		}
+		catch (tf::TransformException& ex)
+		{
+			ROS_ERROR("%s",ex.what());
+		}
+	}
+
+	void robotLocationUpdate()
 	{
 		ROS_INFO("[%s] step", ros::this_node::getName().c_str());
 	}
 
+	bool getShopsList(gb_datahub::GetShopsList::Request &req, gb_datahub::GetShopsList::Response &res)
+	{
+		std::vector<shop> shops = gb_datahub::getShopsList();
+
+		for(int i=0; i< shops.size(); i++)
+		{
+			gb_datahub::Shop shop_;
+			shop_.id = shops[i].id ;
+			shop_.type = shops[i].type;
+			shop_.floor = shops[i].floor;
+			shop_.description = shops[i].description;
+			shop_.goal = shops[i].goal;
+			res.shops.push_back(shop_);
+		}
+
+		return true;
+
+	}
+
+	void step()
+	{
+		 tf::StampedTransform bf2map;
+		 poseCallback(bf2map);
+	 }
+
 protected:
 
-  std::string team_id_;
-  std::string team_key_;
-
+	ros::NodeHandle nh_;
+	ros::ServiceServer srv_;
+  ros::Subscriber robot_location_sub_;
+	ros::Subscriber tf_sub_;
+	tf::TransformListener tf_listener_;
 
 };
 
@@ -76,91 +169,16 @@ int main(int argc, char** argv)
 
 	TakeTheElevator take_the_elevator;
 
-	std::cout << "---------------GET SHOP LIST-------------------" << std::endl;
-	std::vector<shop> sh = gb_datahub::getShopList();
-	/*
-	std::cout << sh[0].id << std::endl;
-	std::cout << sh[1].id << std::endl;
-	std::cout << sh[2].id << std::endl;
-	*/
+	ros::Rate loop_rate(1);
 
-	std::cout << "--------------END GET SHOP LIST---------------" << std::endl;
+	//take_the_elevator.getShopsList();
 
+	while (ros::ok())
+  {
+    take_the_elevator.step();
+
+    ros::spinOnce();
+    loop_rate.sleep();
+  }
 	return 0;
 }
-
-/*
-
-[{"@id":"SHOP00","@type":"Shop","_datasetid":"5a05b34b-6772-4583-8d1a-427d2c72e330","_id":"shop00/shop","_timestamp":1565974816,"_timestamp_day":16,"_timestamp_hour":18,"_timestamp_minute":0,"_timestamp_month":8,"_timestamp_second":16,"_timestamp_year":2019,"_updated":true,"description":"Tesco","floor":1,"goal":false},{"@id":"SHOP01","@type":"Shop","_datasetid":"5a05b34b-6772-4583-8d1a-427d2c72e330","_id":"shop01/shop","_timestamp":1565974816,"_timestamp_day":16,"_timestamp_hour":18,"_timestamp_minute":0,"_timestamp_month":8,"_timestamp_second":16,"_timestamp_year":2019,"_updated":true,"description":"Waitrose","floor":2,"goal":false},{"@id":"SHOP02","@type":"Shop","_datasetid":"5a05b34b-6772-4583-8d1a-427d2c72e330","_id":"shop02/shop","_timestamp":1565974816,"_timestamp_day":16,"_timestamp_hour":18,"_timestamp_minute":0,"_timestamp_month":8,"_timestamp_second":16,"_timestamp_year":2019,"_updated":true,"description":"Marks and Spencer","floor":3,"goal":false},{"@id":"SHOP03","@type":"Shop","_datasetid":"5a05b34b-6772-4583-8d1a-427d2c72e330","_id":"shop03/shop","_timestamp":1565974816,"_timestamp_day":16,"_timestamp_hour":18,"_timestamp_minute":0,"_timestamp_month":8,"_timestamp_second":16,"_timestamp_year":2019,"_updated":true,"description":"Costa","floor":4,"goal":true}]
-[
-    {
-        "@id": "SHOP00",
-        "@type": "Shop",
-        "_datasetid": "5a05b34b-6772-4583-8d1a-427d2c72e330",
-        "_id": "shop00/shop",
-        "_timestamp": 1565974816,
-        "_timestamp_day": 16,
-        "_timestamp_hour": 18,
-        "_timestamp_minute": 0,
-        "_timestamp_month": 8,
-        "_timestamp_second": 16,
-        "_timestamp_year": 2019,
-        "_updated": true,
-        "description": "Tesco",
-        "floor": 1,
-        "goal": false
-    },
-    {
-        "@id": "SHOP01",
-        "@type": "Shop",
-        "_datasetid": "5a05b34b-6772-4583-8d1a-427d2c72e330",
-        "_id": "shop01/shop",
-        "_timestamp": 1565974816,
-        "_timestamp_day": 16,
-        "_timestamp_hour": 18,
-        "_timestamp_minute": 0,
-        "_timestamp_month": 8,
-        "_timestamp_second": 16,
-        "_timestamp_year": 2019,
-        "_updated": true,
-        "description": "Waitrose",
-        "floor": 2,
-        "goal": false
-    },
-    {
-        "@id": "SHOP02",
-        "@type": "Shop",
-        "_datasetid": "5a05b34b-6772-4583-8d1a-427d2c72e330",
-        "_id": "shop02/shop",
-        "_timestamp": 1565974816,
-        "_timestamp_day": 16,
-        "_timestamp_hour": 18,
-        "_timestamp_minute": 0,
-        "_timestamp_month": 8,
-        "_timestamp_second": 16,
-        "_timestamp_year": 2019,
-        "_updated": true,
-        "description": "Marks and Spencer",
-        "floor": 3,
-        "goal": false
-    },
-    {
-        "@id": "SHOP03",
-        "@type": "Shop",
-        "_datasetid": "5a05b34b-6772-4583-8d1a-427d2c72e330",
-        "_id": "shop03/shop",
-        "_timestamp": 1565974816,
-        "_timestamp_day": 16,
-        "_timestamp_hour": 18,
-        "_timestamp_minute": 0,
-        "_timestamp_month": 8,
-        "_timestamp_second": 16,
-        "_timestamp_year": 2019,
-        "_updated": true,
-        "description": "Costa",
-        "floor": 4,
-        "goal": true
-    }
-]
-
-*/

@@ -140,7 +140,7 @@ namespace gb_datahub
 
 // Episode4
 
-  std::vector<shop> getShopList();
+  std::vector<shop> getShopsList();
 
 // JSON
   std::vector<robotStatus> robotStatusListJsonToObject(std::string info);

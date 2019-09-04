@@ -34,7 +34,12 @@
 
 /* Author: Lorena Bajo Rebollo lbajo9@gmail.com */
 
-#include <ros/ros.h>
+#include "ros/ros.h"
+#include <tf/transform_broadcaster.h>
+#include <tf/transform_listener.h>
+#include <tf/tfMessage.h>
+#include <geometry_msgs/PoseStamped.h>
+#include "boost/date_time/posix_time/posix_time.hpp"
 
 #include <string>
 #include <list>
@@ -42,6 +47,9 @@
 #include <set>
 
 #include <gb_datahub/gb_datahub.h>
+#include <gb_datahub/GetMenu.h>
+#include <gb_datahub/Menu.h>
+#include <gb_datahub/Product.h>
 
 using json = nlohmann::json;
 
@@ -50,162 +58,132 @@ class CoffeeShopDelivery
 public:
 	CoffeeShopDelivery()
 	{
-    team_id_= "gentlebots";
-    team_key_ = "ea7bfa2e-77e3-4948-80b6-5b84af77a4b2";
+		srv_ = nh_.advertiseService("/gb_datahub/menu", &CoffeeShopDelivery::getMenu, this);
 	}
 
 	~CoffeeShopDelivery()
 	{
 	}
 
+	geometry_msgs::PoseStamped stampedTransform2poseStamped(tf::StampedTransform bf2map)
+	{
+		geometry_msgs::PoseStamped ps_;
+		geometry_msgs::Quaternion quat_;
+		geometry_msgs::Point point_;
+		tf::Quaternion tf_quat_;
+		tf::Vector3 vect_;
+
+		tf_quat_ = bf2map.getRotation();
+		quat_.x = tf_quat_.x();
+		quat_.y = tf_quat_.y();
+		quat_.z = tf_quat_.z();
+		quat_.w = tf_quat_.w();
+		ps_.pose.orientation = quat_;
+
+		vect_ = bf2map.getOrigin();
+		point_.x = vect_.getX();
+		point_.y = vect_.getY();
+		point_.z = vect_.getZ();
+		ps_.pose.position = point_;
+		ps_.header.frame_id = bf2map.frame_id_;
+		ps_.header.stamp = bf2map.stamp_;
+
+		return ps_;
+	}
+
+	void poseCallback(tf::StampedTransform& bf2map)
+	{
+		geometry_msgs::PoseStamped ps_;
+
+		try
+		{
+			tf_listener_.lookupTransform("/base_footprint", "/map", ros::Time(0), bf2map);
+
+			ps_ = stampedTransform2poseStamped(bf2map);
+
+				//pose_pub_.publish(ps_);
+			robotLocation robotLocation_;
+			robotLocation_.id = ps_.header.seq;
+			robotLocation_.type = "RobotLocation";
+			robotLocation_.episode = "episode4";
+			robotLocation_.team = gb_datahub::team_id_;
+			robotLocation_.timestamp = boost::posix_time::to_iso_extended_string(ps_.header.stamp.toBoost());
+			robotLocation_.x = ps_.pose.position.x;
+			robotLocation_.y = ps_.pose.position.y;
+			robotLocation_.z = ps_.pose.position.z;
+
+			gb_datahub::postRobotLocation(robotLocation_);
+
+		}
+		catch (tf::TransformException& ex)
+		{
+			ROS_ERROR("%s",ex.what());
+		}
+	}
+
+
+	bool getMenu(gb_datahub::GetMenu::Request &req, gb_datahub::GetMenu::Response &res)
+	{
+		menu menu_ = gb_datahub::getMenu();
+
+		gb_datahub::Menu m_;
+
+		m_.id = menu_.id ;
+		m_.type = menu_.type;
+
+		for(int i=0; i< menu_.products.size(); i++)
+		{
+			gb_datahub::Product pr_;
+
+			pr_.id = menu_.products[i].id;
+			pr_.type = menu_.products[i].type;
+			pr_.label = menu_.products[i].label;
+			pr_.descriptions = menu_.products[i].descriptions;
+			pr_.price = menu_.products[i].price;
+
+			m_.products.push_back(pr_);
+		}
+
+		res.menu = m_;
+
+		return true;
+	}
+
 	void step()
 	{
-		ROS_INFO("[%s] step", ros::this_node::getName().c_str());
+		tf::StampedTransform bf2map;
+		poseCallback(bf2map);
 	}
 
 protected:
 
-  ros::NodeHandle nh_;
-
+	ros::NodeHandle nh_;
+	ros::ServiceServer srv_;
   ros::Subscriber robot_location_sub_;
-
-  std::string team_id_;
-  std::string team_key_;
+	ros::Subscriber tf_sub_;
+	tf::TransformListener tf_listener_;
 
 };
 
 
-
 int main(int argc, char** argv)
 {
-
   ros::init(argc, argv, "coffee_shop_delivery");
 
   CoffeeShopDelivery coffee_shop_delivery;
 
-  std::cout << "---------------GET MENU-------------------" << std::endl;
-  menu m = gb_datahub::getMenu();
-/*
-	std::cout << m.id << std::endl;
-	std::cout << m.type << std::endl;
-	for(int i=0; i< m.products.size(); i++){
-		std::cout << m.products[i].id << std::endl;
-	}
-	*/
-  std::cout << "--------------END GET MENU---------------" << std::endl;
+	ros::Rate loop_rate(1);
 
-	std::cout << "---------------POST TABLE-------------------" << std::endl;
-	std::string post_ = "  {\n    \"@id\": \"TABLE1\",\n    \"@type\": \"Table\",\n    \"customers\": 2,\n    \"status\": \"Ready\"\n  }";
+	//coffee_shop_delivery.getMenu():
 
-	table t;
-	t.id = "TABLE78";
-	t.type = "Table";
-	t.customers = 2;
-	t.status = "Ready";
+  while (ros::ok())
+  {
+    coffee_shop_delivery.step();
 
-	int v = gb_datahub::postTable(t);
-	//std::cout << v << std::endl;
-
-  std::cout << "--------------END POST TABLE---------------" << std::endl;
-/*
-	std::cout << "---------------PUT TABLE-------------------" << std::endl;
-	std::string put_ = "  {\n    \"@id\": \"TABLE0\",\n    \"@type\": \"Table\",\n    \"customers\": 2,\n    \"status\": \"Ready\"\n  }";
-	gb_datahub::putTable(t);
-	std::cout << "-------------json[0]["@id"]-END PUT TABLE---------------" << std::endl;
-
-	std::cout << "---------------DELETE TABLE-------------------" << std::endl;
-	gb_datahub::deleteTable(t.id);
-	std::cout << "--------------END DELETE TABLE---------------" << std::endl;
-*/
-
-
-///test table
-//std::string post_ = "  {\n    \"@id\": \"TABLE1\",\n    \"@type\": \"Table\",\n    \"customers\": 2,\n    \"status\": \"Ready\"\n  }";
-//gb_datahub::tableJsonToObject(post_);
-
-
-std::cout <<"______" << std::endl;
-
-std::string or_ = "{\"@id\": \"ORDER1\",    \"@type\": \"Order\",    \"table\": \"Table1\",    \"timestamp\": \"2019-09-03T08:06:04.818Z\",  \"products\": [ \"coke\", \"fanta\" ],   \"status\": \"Pending\" }";
-
-order o = gb_datahub::orderJsonToObject(or_);
-/*
-std::vector<std::string> vec;
-vec.push_back("coke");
-vec.push_back("fanta");
-order o;
-o.id = "Order1";
-o.type = "Order";
-o.table = "table1";
-o.timestamp ="2019-09-03T08:06:04.818Z";
-o.products = vec;
-o.status = "pending";
-*/
-
-	json j2 = gb_datahub::orderToJson(o);
-
-	std::cout << j2.dump(4) << std::endl;
-	std::cout <<"______" << std::endl;
+    ros::spinOnce();
+  	loop_rate.sleep();
+  }
 
 	return 0;
 
 }
-
-/*
-Text [{"_id":"menu0\/menu","@id":"MENU0","@type":"Menu","products":[{"@id":"PR001","@type":"Product","label":"espresso","descriptions":"espresso in a small cup","price":"\u00a31.50"},{"@id":"PR002","@type":"Product","label":"cappuccino","descriptions":"cappuccino in a medium cup","price":"\u00a32.40"},{"@id":"PR003","@type":"Product","label":"flat white","descriptions":"flat white in a big cup","price":"\u00a32.80"},{"@id":"PR004","@type":"Product","label":"butter croissant","descriptions":"butter croissant with no packaging","price":"\u00a31.50"},{"@id":"PR005","@type":"Product","label":"biscotti","descriptions":"italian biscotti in a transparent packaging","price":"\u00a32.00"}],"_datasetid":"5a05b34b-6772-4583-8d1a-427d2c72e330","_timestamp":1565974108,"_timestamp_year":2019,"_timestamp_month":8,"_timestamp_day":16,"_timestamp_hour":17,"_timestamp_minute":48,"_timestamp_second":28,"_updated":true}]
-
-[
-    {
-        "@id": "MENU0",
-        "@type": "Menu",
-        "_datasetid": "5a05b34b-6772-4583-8d1a-427d2c72e330",
-        "_id": "menu0/menu",
-        "_timestamp": 1565974108,
-        "_timestamp_day": 16,
-        "_timestamp_hour": 17,
-        "_timestamp_minute": 48,
-        "_timestamp_month": 8,
-        "_timestamp_second": 28,
-        "_timestamp_year": 2019,
-        "_updated": true,
-        "products": [
-            {
-                "@id": "PR001",
-                "@type": "Product",
-                "descriptions": "espresso in a small cup",
-                "label": "espresso",
-                "price": "£1.50"
-            },
-            {
-                "@id": "PR002",
-                "@type": "Product",
-                "descriptions": "cappuccino in a medium cup",
-                "label": "cappuccino",
-                "price": "£2.40"
-            },
-            {
-                "@id": "PR003",
-                "@type": "Product",
-                "descriptions": "flat white in a big cup",
-                "label": "flat white",
-                "price": "£2.80"
-            },
-            {
-                "@id": "PR004",
-                "@type": "Product",
-                "descriptions": "butter croissant with no packaging",
-                "label": "butter croissant",
-                "price": "£1.50"
-            },
-            {
-                "@id": "PR005",
-                "@type": "Product",
-                "descriptions": "italian biscotti in a transparent packaging",
-                "label": "biscotti",
-                "price": "£2.00"
-            }
-        ]
-    }
-]
-
-*/
