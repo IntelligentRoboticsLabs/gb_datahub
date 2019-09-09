@@ -124,9 +124,9 @@ int main(int argc, char** argv)
 //gb_datahub::tableJsonToObject(post_);
 
 
-	std::cout <<"______" << std::endl;
+	std::cout <<"---------------POST ORDER-------------------" << std::endl;
 
-	std::string or_ = "{\"@id\": \"ORDER1\",    \"@type\": \"Order\",    \"table\": \"Table1\",    \"timestamp\": \"2019-09-03T08:06:04.818Z\",  \"products\": [ \"coke\", \"fanta\" ],   \"status\": \"Pending\" }";
+	std::string or_ = "{\"@id\": \"ORDER98\",    \"@type\": \"Order\",    \"table\": \"Table1\",    \"timestamp\": \"2019-09-03T08:06:04.818Z\",  \"products\": [ \"coke\", \"fanta\" ],   \"status\": \"Pending\" }";
 
 	order o = gb_datahub::orderJsonToObject(or_);
 /*
@@ -142,10 +142,16 @@ o.products = vec;
 o.status = "pending";
 */
 
+	int a = gb_datahub::postOrder(o);
+
+	std::cout << a << std::endl;
+
 	json j2 = gb_datahub::orderToJson(o);
 
 	std::cout << j2.dump(4) << std::endl;
-	std::cout <<"______" << std::endl;
+	//std::cout <<"______" << std::endl;
+
+	std::cout <<"---------------END ORDER-------------------" << std::endl;
 
 
 	std::cout << "---------------GET SHOP LIST-------------------" << std::endl;

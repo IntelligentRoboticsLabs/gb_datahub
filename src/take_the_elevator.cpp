@@ -131,6 +131,8 @@ public:
 	{
 		std::vector<shop> shops = gb_datahub::getShopsList();
 
+		std::cout << shops.size() << std::endl;
+
 		for(int i=0; i< shops.size(); i++)
 		{
 			gb_datahub::Shop shop_;
@@ -143,7 +145,23 @@ public:
 		}
 
 		return true;
+	}
 
+	void prueba(){
+		std::vector<shop> shops = gb_datahub::getShopsList();
+
+		std::cout << shops.size() << std::endl;
+
+				for(int i=0; i< shops.size(); i++)
+				{
+					gb_datahub::Shop shop_;
+					shop_.id = shops[i].id ;
+					shop_.type = shops[i].type;
+					shop_.floor = shops[i].floor;
+					shop_.description = shops[i].description;
+					shop_.goal = shops[i].goal;
+					//res.shops.push_back(shop_);
+				}
 	}
 
 	void step()
@@ -159,7 +177,6 @@ protected:
   ros::Subscriber robot_location_sub_;
 	ros::Subscriber tf_sub_;
 	tf::TransformListener tf_listener_;
-
 };
 
 
@@ -172,11 +189,15 @@ int main(int argc, char** argv)
 	ros::Rate loop_rate(1);
 
 	//take_the_elevator.getShopsList();
+	bool first = true;
 
 	while (ros::ok())
   {
-    take_the_elevator.step();
-
+		if (first) {
+			//take_the_elevator.prueba();
+		}
+    //take_the_elevator.step();
+		first = false;
     ros::spinOnce();
     loop_rate.sleep();
   }

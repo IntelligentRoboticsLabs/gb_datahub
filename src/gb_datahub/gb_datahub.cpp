@@ -660,7 +660,7 @@ namespace gb_datahub
     json["table"] = order_.table;
     json["timestamp"] = order_.timestamp;
     json["products"] = order_.products;
-    json["staus"] = order_.status;
+    json["status"] = order_.status;
 
     return json;
   }
