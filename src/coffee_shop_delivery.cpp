@@ -40,6 +40,7 @@
 #include <tf/tfMessage.h>
 #include <geometry_msgs/PoseStamped.h>
 #include "boost/date_time/posix_time/posix_time.hpp"
+#include <bica_graph/graph_client.h>
 
 #include <string>
 #include <list>
@@ -105,14 +106,14 @@ public:
 			robotLocation robotLocation_;
 			robotLocation_.id = ps_.header.seq;
 			robotLocation_.type = "RobotLocation";
-			robotLocation_.episode = "episode4";
+			robotLocation_.episode = "episode3";
 			robotLocation_.team = gb_datahub::team_id_;
 			robotLocation_.timestamp = boost::posix_time::to_iso_extended_string(ps_.header.stamp.toBoost());
 			robotLocation_.x = ps_.pose.position.x;
 			robotLocation_.y = ps_.pose.position.y;
 			robotLocation_.z = ps_.pose.position.z;
 
-			gb_datahub::postRobotLocation(robotLocation_);
+			ROS_INFO("[coffee_shop_delivery] postStatus %i", gb_datahub::postRobotLocation(robotLocation_));
 
 		}
 		catch (tf::TransformException& ex)
@@ -153,6 +154,14 @@ public:
 	{
 		tf::StampedTransform bf2map;
 		poseCallback(bf2map);
+
+
+
+    auto interest_edges = graph_.get_string_edges_from_node_by_data("sonny", "robot_status: [[:alnum:]_]*");
+    if (!interest_edges.empty())
+    {
+      ROS_INFO("robot_status: %s", interest_edges[0].get().c_str());
+    }
 	}
 
 protected:
@@ -162,6 +171,7 @@ protected:
   ros::Subscriber robot_location_sub_;
 	ros::Subscriber tf_sub_;
 	tf::TransformListener tf_listener_;
+  bica_graph::GraphClient graph_;
 
 };
 
