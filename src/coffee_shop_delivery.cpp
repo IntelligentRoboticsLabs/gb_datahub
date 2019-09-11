@@ -40,6 +40,7 @@
 #include <tf/tfMessage.h>
 #include <geometry_msgs/PoseStamped.h>
 #include "boost/date_time/posix_time/posix_time.hpp"
+#include <bica_graph/graph_client.h>
 
 #include <string>
 #include <list>
@@ -114,7 +115,7 @@ public:
 			robotLocation_.y = ps_.pose.position.y;
 			robotLocation_.z = ps_.pose.position.z;
 
-			gb_datahub::postRobotLocation(robotLocation_);
+			ROS_INFO("[coffee_shop_delivery] postStatus %i", gb_datahub::postRobotLocation(robotLocation_));
 
 		}
 		catch (tf::TransformException& ex)
@@ -155,6 +156,14 @@ public:
 	{
 		tf::StampedTransform bf2map;
 		poseCallback(bf2map);
+
+
+
+    auto interest_edges = graph_.get_string_edges_from_node_by_data("sonny", "robot_status: [[:alnum:]_]*");
+    if (!interest_edges.empty())
+    {
+      ROS_INFO("robot_status: %s", interest_edges[0].get().c_str());
+    }
 	}
 
 protected:
@@ -166,6 +175,7 @@ protected:
 	tf::TransformListener tf_listener_;
 	std::string team_id_;
 	std::string team_key_ ;
+  bica_graph::GraphClient graph_;
 
 };
 
