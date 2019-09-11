@@ -48,6 +48,8 @@ using json = nlohmann::json;
 
 namespace gb_datahub
 {
+  std::string team_id_= "gentlebots";
+  std::string team_key_ = "ea7bfa2e-77e3-4948-80b6-5b84af77a4b2";
 
   std::vector<robotStatus> getRobotStatusList()
   {
@@ -298,7 +300,7 @@ namespace gb_datahub
 
   }
 
-  order getOrder(std::string id)
+  std::vector<order> getOrder(std::string id)
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-episode3-order/"+ id;
 
@@ -309,8 +311,9 @@ namespace gb_datahub
     auto response_ = session.Get();
 
     //prettyJson(response_.text);
+    //std::cout << response_.status_code << std::endl;
 
-    return orderJsonToObject(response_.text);
+    return orderListJsonToObject(response_.text);
    }
 
   int putOrder(order order_)
@@ -517,8 +520,8 @@ namespace gb_datahub
     order_.type = json["@type"];
     order_.table = json["table"];
     order_.timestamp = json["timestamp"];
-
     std::vector<std::string> products_;
+
     for(int i=0; i< json["products"].size(); i++)
     {
       std::string p = json["products"][i];
@@ -527,6 +530,7 @@ namespace gb_datahub
 
     order_.products = products_;
     order_.status = json["status"];
+
 
     return order_;
   }
@@ -613,6 +617,14 @@ namespace gb_datahub
   json robotLocationToJson(robotLocation robotLocation_)
   {
     json json;
+    std::cout << robotLocation_.id << std::endl;
+    std::cout << robotLocation_.type << std::endl;
+    std::cout << robotLocation_.episode << std::endl;
+    std::cout << robotLocation_.team << std::endl;
+    std::cout << robotLocation_.timestamp << std::endl;
+    std::cout << robotLocation_.x << std::endl;
+    std::cout << robotLocation_.y << std::endl;
+    std::cout << robotLocation_.z << std::endl;
 
     json["@id"] = robotLocation_.id;
     json["@type"] = robotLocation_.type;
@@ -633,6 +645,17 @@ namespace gb_datahub
     json["@id"] = table_.id;
     json["@type"] = table_.type;
     json["customers"] = table_.customers;
+
+    if (table_.status == "ready"){
+      table_.status = "Ready";
+    }else if (table_.status == "needs_cleaning"){
+      table_.status = "Needs_cleaning";
+    } else if (table_.status == "needs_serving"){
+        table_.status = "Needs_serving";
+    }else if (table_.status == "already_served"){
+      table_.status = "Already_served";
+    }
+
     json["status"] = table_.status;
 
     return json;

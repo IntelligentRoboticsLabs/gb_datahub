@@ -133,7 +133,7 @@ namespace gb_datahub
   int postTable(table table_);
   int deleteTable(std::string id);
   std::vector<order> getOrderList();
-  order getOrder(std::string id);
+  std::vector<order> getOrder(std::string id);
   int putOrder(order order_);
   int postOrder(order order_);
   int deleteOrder(std::string id);
@@ -164,8 +164,8 @@ namespace gb_datahub
   json orderToJson(order order_);
 
 
-  std::string team_id_= "gentlebots";
-  std::string team_key_ = "ea7bfa2e-77e3-4948-80b6-5b84af77a4b2";
+  //std::string team_id_= "gentlebots";
+  //std::string team_key_ = "ea7bfa2e-77e3-4948-80b6-5b84af77a4b2";
 
 }
 

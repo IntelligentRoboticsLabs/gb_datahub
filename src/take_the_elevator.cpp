@@ -59,6 +59,8 @@ public:
 	{
 		srv_ = nh_.advertiseService("/gb_datahub/shops", &TakeTheElevator::getShopsList, this);
 		//tf_sub_ = nh_.subscribe("/tf", 1, &TakeTheElevator::tfCallback, this);
+		team_id_= "gentlebots";
+		team_key_ = "ea7bfa2e-77e3-4948-80b6-5b84af77a4b2";
 	}
 
 	~TakeTheElevator()
@@ -106,8 +108,8 @@ public:
 			robotLocation robotLocation_;
 			robotLocation_.id = ps_.header.seq;
 			robotLocation_.type = "RobotLocation";
-			robotLocation_.episode = "episode4";
-			robotLocation_.team = gb_datahub::team_id_;
+			robotLocation_.episode = "EPISODE4";
+			robotLocation_.team = team_id_;
 			robotLocation_.timestamp = boost::posix_time::to_iso_extended_string(ps_.header.stamp.toBoost());
 			robotLocation_.x = ps_.pose.position.x;
 			robotLocation_.y = ps_.pose.position.y;
@@ -177,6 +179,8 @@ protected:
   ros::Subscriber robot_location_sub_;
 	ros::Subscriber tf_sub_;
 	tf::TransformListener tf_listener_;
+	std::string team_id_;
+	std::string team_key_;
 };
 
 

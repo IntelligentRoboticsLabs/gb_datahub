@@ -101,10 +101,11 @@ int main(int argc, char** argv)
 	t.id = "TABLE78";
 	t.type = "Table";
 	t.customers = 2;
-	t.status = "Ready";
+	t.status = "Already_served";
 
 	int v = gb_datahub::postTable(t);
 	//std::cout << v << std::endl;
+	std::cout << v << std::endl;
 
   std::cout << "--------------END POST TABLE---------------" << std::endl;
 /*
@@ -126,21 +127,21 @@ int main(int argc, char** argv)
 
 	std::cout <<"---------------POST ORDER-------------------" << std::endl;
 
-	std::string or_ = "{\"@id\": \"ORDER98\",    \"@type\": \"Order\",    \"table\": \"Table1\",    \"timestamp\": \"2019-09-03T08:06:04.818Z\",  \"products\": [ \"coke\", \"fanta\" ],   \"status\": \"Pending\" }";
+	std::string or_ = "{\"@id\": \"ORDER0\",    \"@type\": \"Order\",    \"table\": \"Table1\",    \"timestamp\": \"2019-09-03T08:06:04.818Z\",  \"products\": [ \"coke\", \"fanta\" ],   \"status\": \"Pending\" }";
 
 	order o = gb_datahub::orderJsonToObject(or_);
-/*
-std::vector<std::string> vec;
-vec.push_back("coke");
-vec.push_back("fanta");
-order o;
-o.id = "Order1";
-o.type = "Order";
-o.table = "table1";
-o.timestamp ="2019-09-03T08:06:04.818Z";
-o.products = vec;
-o.status = "pending";
-*/
+	/*
+	std::vector<std::string> vec;
+	vec.push_back("coke");
+	vec.push_back("fanta");
+	order o;
+	o.id = "Order1";
+	o.type = "Order";
+	o.table = "table1";
+	o.timestamp ="2019-09-03T08:06:04.818Z";
+	o.products = vec;
+	o.status = "pending";
+	*/
 
 	int a = gb_datahub::postOrder(o);
 
@@ -148,22 +149,40 @@ o.status = "pending";
 
 	json j2 = gb_datahub::orderToJson(o);
 
-	std::cout << j2.dump(4) << std::endl;
+	//std::cout << j2.dump(4) << std::endl;
 	//std::cout <<"______" << std::endl;
 
 	std::cout <<"---------------END ORDER-------------------" << std::endl;
+	gb_datahub::getOrder("ORDER0");
+	//std::cout << gb_datahub::getOrder("ORDER0") << std::endl;
 
+	std::cout <<"---------------END getORDER-------------------" << std::endl;
 
+/*
 	std::cout << "---------------GET SHOP LIST-------------------" << std::endl;
 	std::vector<shop> sh = gb_datahub::getShopsList();
 	/*
 		std::cout << sh[0].id << std::endl;
 		std::cout << sh[1].id << std::endl;
 		std::cout << sh[2].id << std::endl;
-	*/
+
 
 	std::cout << "--------------END GET SHOP LIST---------------" << std::endl;
 
+	robotLocation robotLocation_;
+	robotLocation_.id = "ROBOTLOCATION00";
+	robotLocation_.type = "RobotLocation";
+	robotLocation_.episode = "EPISODE3";
+	robotLocation_.team = "gentlebots";
+	robotLocation_.timestamp = "2019-09-11T15:34:02.490Z";
+	robotLocation_.x = 0;
+	robotLocation_.y = 1;
+	robotLocation_.z = 2;
+
+	std::cout << gb_datahub::postRobotLocation(robotLocation_) << std::endl;
+
+
+*/
 	return 0;
 
 }
