@@ -134,8 +134,6 @@ public:
 
 			gb_datahub::postRobotLocation(robotLocation_);
 
-			gb_datahub::postRobotLocation(robotLocation_);
-
 			auto interest_edges = graph_.get_string_edges_from_node_by_data("sonny", "robot_status: [[:alnum:]_]*");
 			if (!interest_edges.empty() && last_status_ != interest_edges[0].get().c_str())
 			{
