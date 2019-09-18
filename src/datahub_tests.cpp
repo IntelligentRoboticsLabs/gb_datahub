@@ -44,14 +44,15 @@
 #include <gb_datahub/gb_datahub.h>
 
 using json = nlohmann::json;
+using namespace std;
 
 class DatahubTests
 {
 public:
 	DatahubTests()
 	{
-    team_id_= "gentlebots";
-    team_key_ = "ea7bfa2e-77e3-4948-80b6-5b84af77a4b2";
+    //team_id_= "gentlebots";
+		//team_key_ = "MKRobot2019";
 	}
 
 	~DatahubTests()
@@ -69,8 +70,8 @@ protected:
 
   ros::Subscriber robot_location_sub_;
 
-  std::string team_id_;
-  std::string team_key_;
+  //std::string team_id_;
+  //std::string team_key_;
 
 };
 
@@ -101,13 +102,14 @@ int main(int argc, char** argv)
 	t.id = "TABLE78";
 	t.type = "Table";
 	t.customers = 2;
-	t.status = "Already_served";
+	t.status = "Already served";
 
 	int v = gb_datahub::postTable(t);
 	//std::cout << v << std::endl;
 	std::cout << v << std::endl;
 
   std::cout << "--------------END POST TABLE---------------" << std::endl;
+
 /*
 	std::cout << "---------------PUT TABLE-------------------" << std::endl;
 	std::string put_ = "  {\n    \"@id\": \"TABLE0\",\n    \"@type\": \"Table\",\n    \"customers\": 2,\n    \"status\": \"Ready\"\n  }";
@@ -158,13 +160,18 @@ int main(int argc, char** argv)
 
 	std::cout <<"---------------END getORDER-------------------" << std::endl;
 
-/*
+
 	std::cout << "---------------GET SHOP LIST-------------------" << std::endl;
-	std::vector<shop> sh = gb_datahub::getShopsList();
-	/*
-		std::cout << sh[0].id << std::endl;
-		std::cout << sh[1].id << std::endl;
-		std::cout << sh[2].id << std::endl;
+	//std::vector<shop> sh = gb_datahub::getShopsList();
+/*
+	std::vector<shop> shops = gb_datahub::getShopsList();
+	for (auto shop : shops)
+	{
+		if (shop.goal == true)
+			//target_floor_ = car2ord(shop.floor);
+			std::cout << shop.floor << std::endl;
+	}
+*/
 
 
 	std::cout << "--------------END GET SHOP LIST---------------" << std::endl;
@@ -174,15 +181,27 @@ int main(int argc, char** argv)
 	robotLocation_.type = "RobotLocation";
 	robotLocation_.episode = "EPISODE3";
 	robotLocation_.team = "gentlebots";
-	robotLocation_.timestamp = "2019-09-11T15:34:02.490Z";
-	robotLocation_.x = 0;
-	robotLocation_.y = 1;
-	robotLocation_.z = 2;
-
+	robotLocation_.timestamp = "2019-09-17T15:07:07.520Z";
+														//2019-09-18T10:33:08.400779
+	robotLocation_.x = 0.00;
+	robotLocation_.y = 1.00;
+	robotLocation_.z = 2.00;
 	std::cout << gb_datahub::postRobotLocation(robotLocation_) << std::endl;
 
+	// current date/time based on current system
+	   time_t now = time(0);
 
-*/
+	   // convert now to string form
+	   char* dt = ctime(&now);
+
+	   cout << "The local date and time is: " << dt << endl;
+
+	   // convert now to tm struct for UTC
+	   tm *gmtm = gmtime(&now);
+	   dt = asctime(gmtm);
+	   cout << "The UTC date and time is:"<< dt << endl;
+
+
 	return 0;
 
 }
