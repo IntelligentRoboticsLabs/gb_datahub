@@ -238,16 +238,9 @@ int main(int argc, char** argv)
 
 	ros::Rate loop_rate(1);
 
-	//take_the_elevator.getShopsList();
-	bool first = true;
-
 	while (ros::ok())
   {
-		if (first) {
-			//take_the_elevator.prueba();
-		}
-    //take_the_elevator.step();
-		first = false;
+    take_the_elevator.step();
     ros::spinOnce();
     loop_rate.sleep();
   }
