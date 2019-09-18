@@ -134,11 +134,23 @@ public:
 
 			gb_datahub::postRobotLocation(robotLocation_);
 
-			auto interest_edges = graph_.get_string_edges_from_node_by_data("sonny", "robot_status: [[:alnum:]_]*");
-			if (!interest_edges.empty() && last_status_ != interest_edges[0].get().c_str())
+			auto interest_edges = graph_.get_string_edges_from_node("sonny");
+			std::string status_;
+			for (int i=0; i< interest_edges.size(); i++){
+				if (interest_edges[i].get().find("robot_status") != std::string::npos){
+						std::string delimiter = ":";
+						std::string response_raw = interest_edges[i].get().c_str();
+						response_raw.erase(0, response_raw.find(delimiter) + delimiter.length());
+						status_ = response_raw;
+				}
+			}
+
+
+			//auto interest_edges = graph_.get_string_edges_from_node_by_data("sonny", "robot_status: [[:alnum:]_]*");
+			if (!interest_edges.empty() && last_status_ != status_)
 			{
-				ROS_INFO("robot_status: %s", interest_edges[0].get().c_str());
-				last_status_ = interest_edges[0].get().c_str();
+				//ROS_INFO("robot_status: %s", status_);
+				last_status_ = status_;
 
 				robotStatus robotStatus_;
 				robotStatus_.id =  std::to_string(seq++);
