@@ -42,6 +42,7 @@
 #include <set>
 
 #include <gb_datahub/gb_datahub.h>
+#include <boost/algorithm/string.hpp>
 
 using json = nlohmann::json;
 using namespace std;
@@ -186,21 +187,51 @@ int main(int argc, char** argv)
 	robotLocation_.x = 0.00;
 	robotLocation_.y = 1.00;
 	robotLocation_.z = 2.00;
-	std::cout << gb_datahub::postRobotLocation(robotLocation_) << std::endl;
+/*
+	std::string token = robotLocation_.timestamp.substr(11, robotLocation_.timestamp.find(":"));
+	std::cout << token << std::endl;
+	std::string token2 = token.substr(0, token.find(":"));
+	std::cout << token2 << std::endl;
 
-	// current date/time based on current system
-	   time_t now = time(0);
+	std::string token3 = token.substr(13, token.find(":"));
+	std::cout << token2 << std::endl;
+*/
 
-	   // convert now to string form
-	   char* dt = ctime(&now);
+	std::vector<std::string> results;
+	std::vector<std::string> results_hour;
 
-	   cout << "The local date and time is: " << dt << endl;
 
-	   // convert now to tm struct for UTC
-	   tm *gmtm = gmtime(&now);
-	   dt = asctime(gmtm);
-	   cout << "The UTC date and time is:"<< dt << endl;
+	boost::split(results, robotLocation_.timestamp, [](char c){return c == ':';});
 
+	for(int i=0; i< results.size(); i++){
+		std::cout << results[i] << std::endl;
+
+	}
+
+	boost::split(results_hour, results[0], [](char c){return c == 'T';});
+
+	std::cout << results_hour[1] << std::endl;
+
+	std::cout << atoi(results_hour[1].c_str())+1 << std::endl;
+	std::string gmt = results_hour[0] + "T"+ std::to_string(atoi(results_hour[1].c_str())+1) +":" + results[1] + ":" + results[2];
+	std::cout << gmt << std::endl;
+	//std::cout << gb_datahub::postRobotLocation(robotLocation_) << std::endl;
+
+
+		 robotStatus robotstatus_;
+		 robotstatus_.id = "ROBOTSTATUS00";
+		 robotstatus_.type = "RobotStatus";
+		 robotstatus_.message = "Serving...";
+		 robotstatus_.episode = "EPISODE3";
+		 robotstatus_.team = "gentlebots";
+		 robotstatus_.timestamp = "2019-09-17T15:07:07.520Z";
+		 													//2019-09-18T10:33:08.400779
+		 robotstatus_.x = 0.00;
+		 robotstatus_.y = 1.00;
+		 robotstatus_.z = 2.00;
+		 //cout << "RobotStatus init"<< dt << endl;
+		// std::cout << gb_datahub::postRobotStatus(robotstatus_) << std::endl;
+		 //cout << "RobotStatus end"<< dt << endl;
 
 	return 0;
 

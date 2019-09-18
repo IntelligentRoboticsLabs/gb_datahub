@@ -51,6 +51,7 @@
 #include <gb_datahub/GetMenu.h>
 #include <gb_datahub/Menu.h>
 #include <gb_datahub/Product.h>
+#include <boost/algorithm/string.hpp>
 
 using json = nlohmann::json;
 
@@ -63,10 +64,24 @@ public:
 		team_id_= "gentlebots";
 		team_key_ = "ea7bfa2e-77e3-4948-80b6-5b84af77a4b2";
     seq = 0;
+		last_status_ = "";
+
 	}
 
 	~CoffeeShopDelivery()
 	{
+	}
+
+	std::string magicHour(std::string text)
+	{
+		std::vector<std::string> results;
+		std::vector<std::string> results_hour;
+
+		boost::split(results, text, [](char c){return c == ':';});
+		boost::split(results_hour, results[0], [](char c){return c == 'T';});
+		std::string gmt = results_hour[0] + "T"+ std::to_string(atoi(results_hour[1].c_str())+1) +":" + results[1] + ":" + results[2];
+
+		return gmt;
 	}
 
 	geometry_msgs::PoseStamped stampedTransform2poseStamped(tf::StampedTransform bf2map)
@@ -107,25 +122,39 @@ public:
 
 				//pose_pub_.publish(ps_);
 			robotLocation robotLocation_;
-			robotLocation_.id = std::to_string(seq++);
+			robotLocation_.id = "Sonny Location";
 			robotLocation_.type = "RobotLocation";
 			robotLocation_.episode = "EPISODE3";
 			robotLocation_.team = team_id_;
-			robotLocation_.timestamp = boost::posix_time::to_iso_extended_string(ps_.header.stamp.toBoost());
+			robotLocation_.timestamp = magicHour(boost::posix_time::to_iso_extended_string(ps_.header.stamp.toBoost()));
 			robotLocation_.x = ps_.pose.position.x;
 			robotLocation_.y = ps_.pose.position.y;
 			robotLocation_.z = ps_.pose.position.z;
 
-      /*ROS_INFO("[coffee_shop_delivery] robotLocation_.id %s", robotLocation_.id.c_str());
-      ROS_INFO("[coffee_shop_delivery] robotLocation_.type %s", robotLocation_.type.c_str());
-      ROS_INFO("[coffee_shop_delivery] robotLocation_.episode %s", robotLocation_.episode.c_str());
-      ROS_INFO("[coffee_shop_delivery] robotLocation_.team %s", robotLocation_.team.c_str());
-      ROS_INFO("[coffee_shop_delivery] robotLocation_.timestamp %s", robotLocation_.timestamp.c_str());
-      ROS_INFO("[coffee_shop_delivery] robotLocation_.x %i", robotLocation_.x);
-      ROS_INFO("[coffee_shop_delivery] robotLocation_.y %i", robotLocation_.y);
-      ROS_INFO("[coffee_shop_delivery] robotLocation_.z %i", robotLocation_.z);
+			gb_datahub::postRobotLocation(robotLocation_);
 
-			ROS_INFO("[coffee_shop_delivery] postStatus %i", gb_datahub::postRobotLocation(robotLocation_));*/
+			auto interest_edges = graph_.get_string_edges_from_node_by_data("sonny", "robot_status: [[:alnum:]_]*");
+			if (!interest_edges.empty() && last_status_ != interest_edges[0].get().c_str())
+			{
+				ROS_INFO("robot_status: %s", interest_edges[0].get().c_str());
+				last_status_ = interest_edges[0].get().c_str();
+
+				robotStatus robotStatus_;
+				robotStatus_.id =  std::to_string(seq++);
+				robotStatus_.type = "RobotStatus";
+				robotStatus_.message =  interest_edges[0].get().c_str();
+				robotStatus_.episode = "EPISODE3";
+				robotStatus_.team = "gentlebots";
+				robotStatus_.timestamp = magicHour(boost::posix_time::to_iso_extended_string(ps_.header.stamp.toBoost()));
+																 //2019-09-18T10:33:08.400779
+				robotStatus_.x = ps_.pose.position.x;
+				robotStatus_.y = ps_.pose.position.y;
+				robotStatus_.z = ps_.pose.position.z;
+
+				gb_datahub::postRobotStatus(robotStatus_);
+
+				graph_.remove_edge(interest_edges[0]);
+			}
 
 		}
 		catch (tf::TransformException& ex)
@@ -162,18 +191,12 @@ public:
 		return true;
 	}
 
+
+
 	void step()
 	{
 		tf::StampedTransform bf2map;
 		poseCallback(bf2map);
-
-
-
-    auto interest_edges = graph_.get_string_edges_from_node_by_data("sonny", "robot_status: [[:alnum:]_]*");
-    if (!interest_edges.empty())
-    {
-      ROS_INFO("robot_status: %s", interest_edges[0].get().c_str());
-    }
 	}
 
 protected:
@@ -188,6 +211,8 @@ protected:
   bica_graph::GraphClient graph_;
   int seq;
 
+	std::string last_status_;
+
 };
 
 
@@ -198,8 +223,6 @@ int main(int argc, char** argv)
   CoffeeShopDelivery coffee_shop_delivery;
 
 	ros::Rate loop_rate(1);
-
-	//coffee_shop_delivery.getMenu():
 
   while (ros::ok())
   {
