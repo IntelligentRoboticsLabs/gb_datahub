@@ -690,9 +690,27 @@ namespace gb_datahub
   {
     json json;
 
+    std::string id_="";
+    if(order_.table == "table_0"){
+      id_ = "TABLE0";
+    }else if(order_.table == "table_1"){
+      id_ = "TABLE1";
+    }else if(order_.table == "table_2"){
+      id_ = "TABLE2";
+    }else if(order_.table == "table_3"){
+      id_ = "TABLE3";
+    }else if(order_.table == "table_4"){
+      id_ = "TABLE4";
+    }else if(order_.table == "table_5"){
+      id_ = "TABLE5";
+    }else if(order_.table == "table_6"){
+      id_ = "TABLE6";
+    }
+
+
     json["@id"] = order_.id;
     json["@type"] = order_.type;
-    json["table"] = order_.table;
+    json["table"] = id_;
     json["timestamp"] = order_.timestamp;
     json["products"] = order_.products;
     json["status"] = order_.status;
