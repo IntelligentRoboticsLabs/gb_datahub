@@ -619,14 +619,6 @@ namespace gb_datahub
   json robotLocationToJson(robotLocation robotLocation_)
   {
     json json;
-    std::cout << robotLocation_.id << std::endl;
-    std::cout << robotLocation_.type << std::endl;
-    std::cout << robotLocation_.episode << std::endl;
-    std::cout << robotLocation_.team << std::endl;
-    std::cout << robotLocation_.timestamp << std::endl;
-    std::cout << robotLocation_.x << std::endl;
-    std::cout << robotLocation_.y << std::endl;
-    std::cout << robotLocation_.z << std::endl;
 
     json["@id"] = robotLocation_.id;
     json["@type"] = robotLocation_.type;
@@ -644,35 +636,39 @@ namespace gb_datahub
   {
     json json;
 
-    if(table_.id == "table_1"){
-      table_.id = "TABLE0";
+    std::string id_="";
+    if(table_.id == "table_0"){
+      id_ = "TABLE0";
+    }else if(table_.id == "table_1"){
+      id_ = "TABLE1";
     }else if(table_.id == "table_2"){
-      table_.id = "TABLE1";
+      id_ = "TABLE2";
     }else if(table_.id == "table_3"){
-      table_.id = "TABLE2";
+      id_ = "TABLE3";
     }else if(table_.id == "table_4"){
-      table_.id = "TABLE3";
+      id_ = "TABLE4";
     }else if(table_.id == "table_5"){
-      table_.id = "TABLE4";
+      id_ = "TABLE5";
     }else if(table_.id == "table_6"){
-      table_.id = "TABLE5";
+      id_ = "TABLE6";
     }
 
-    json["@id"] = table_.id;
+    json["@id"] = id_;
     json["@type"] = table_.type;
     json["customers"] = table_.customers;
 
+    std::string status_ = "";
     if (table_.status == "ready"){
-      table_.status = "Ready";
+      status_ = "Ready";
     }else if (table_.status == "needs_cleaning"){
-      table_.status = "Needs cleaning";
+      status_ = "Needs cleaning";
     } else if (table_.status == "needs_serving"){
-        table_.status = "Needs serving";
+      status_ = "Needs serving";
     }else if (table_.status == "already_served"){
-      table_.status = "Already served";
+      status_ = "Already served";
     }
 
-    json["status"] = table_.status;
+    json["status"] = status_;
 
     return json;
   }

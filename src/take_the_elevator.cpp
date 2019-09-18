@@ -143,7 +143,7 @@ public:
 				robotStatus robotStatus_;
 				robotStatus_.id =  std::to_string(seq++);
 				robotStatus_.type = "RobotStatus";
-				robotStatus_.message =  interest_edges[0].get().c_str();
+				robotStatus_.message = interest_edges[0].get().c_str();
 				robotStatus_.episode = "EPISODE4";
 				robotStatus_.team = "gentlebots";
 				robotStatus_.timestamp = magicHour(boost::posix_time::to_iso_extended_string(ps_.header.stamp.toBoost()));
