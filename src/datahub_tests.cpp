@@ -43,6 +43,9 @@
 
 #include <gb_datahub/gb_datahub.h>
 #include <boost/algorithm/string.hpp>
+#include "boost/date_time/posix_time/posix_time.hpp"
+#include <boost/algorithm/string.hpp>
+
 
 using json = nlohmann::json;
 using namespace std;
@@ -199,6 +202,9 @@ int main(int argc, char** argv)
 
 	std::vector<std::string> results;
 	std::vector<std::string> results_hour;
+
+	std::cout << boost::posix_time::to_iso_extended_string(ros::Time::now().toBoost())<< std::endl;;
+	std::cout << "rrr-" << std::endl;
 
 
 	boost::split(results, robotLocation_.timestamp, [](char c){return c == ':';});

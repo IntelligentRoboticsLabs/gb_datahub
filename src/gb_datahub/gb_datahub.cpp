@@ -43,6 +43,8 @@
 
 #include <gb_datahub/gb_datahub.h>
 #include <typeinfo>
+#include <boost/algorithm/string.hpp>
+
 
 using json = nlohmann::json;
 
@@ -708,5 +710,16 @@ namespace gb_datahub
     std::cout << json.dump(4) << std::endl;
   }
 
+  std::string magicHour(std::string text)
+  {
+    std::vector<std::string> results;
+    std::vector<std::string> results_hour;
+
+    boost::split(results, text, [](char c){return c == ':';});
+    boost::split(results_hour, results[0], [](char c){return c == 'T';});
+    std::string gmt = results_hour[0] + "T"+ std::to_string(atoi(results_hour[1].c_str())+1) +":" + results[1] + ":" + results[2];
+
+    return gmt;
+  }
 
 };  // namespace gb_attention

@@ -163,6 +163,8 @@ namespace gb_datahub
   json productToJson(product product_);
   json orderToJson(order order_);
 
+  std::string magicHour(std::string text);
+
 
   //std::string team_id_= "gentlebots";
   //std::string team_key_ = "ea7bfa2e-77e3-4948-80b6-5b84af77a4b2";
