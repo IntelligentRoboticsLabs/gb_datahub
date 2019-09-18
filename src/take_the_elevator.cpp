@@ -123,7 +123,7 @@ public:
 
 			//pose_pub_.publish(ps_);
 			robotLocation robotLocation_;
-			robotLocation_.id = "Sonny Location";
+			robotLocation_.id = "SonnyLocation";
 			robotLocation_.type = "RobotLocation";
 			robotLocation_.episode = "EPISODE4";
 			robotLocation_.team = team_id_;
