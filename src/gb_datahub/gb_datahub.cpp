@@ -221,7 +221,7 @@ namespace gb_datahub
 
   }
 
-  table getTable(std::string id)
+  std::vector<table> getTable(std::string id)
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-episode3-table/"+ id;
 
@@ -233,7 +233,7 @@ namespace gb_datahub
 
     //prettyJson(response_.text);
 
-    return tableJsonToObject(response_.text);
+    return tableListJsonToObject(response_.text);
 
   }
 

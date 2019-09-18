@@ -128,7 +128,7 @@ namespace gb_datahub
 // Episode3
   menu getMenu();
   std::vector<table> getTableList();
-  table getTable(std::string id);
+  std::vector<table> getTable(std::string id);
   int putTable(table table_);
   int postTable(table table_);
   int deleteTable(std::string id);
