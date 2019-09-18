@@ -62,6 +62,7 @@ public:
 		srv_ = nh_.advertiseService("/gb_datahub/menu", &CoffeeShopDelivery::getMenu, this);
 		team_id_= "gentlebots";
 		team_key_ = "ea7bfa2e-77e3-4948-80b6-5b84af77a4b2";
+    seq = 0;
 	}
 
 	~CoffeeShopDelivery()
@@ -106,7 +107,7 @@ public:
 
 				//pose_pub_.publish(ps_);
 			robotLocation robotLocation_;
-			robotLocation_.id = ps_.header.seq;
+			robotLocation_.id = std::to_string(seq++);
 			robotLocation_.type = "RobotLocation";
 			robotLocation_.episode = "EPISODE3";
 			robotLocation_.team = team_id_;
@@ -115,7 +116,16 @@ public:
 			robotLocation_.y = ps_.pose.position.y;
 			robotLocation_.z = ps_.pose.position.z;
 
-			ROS_INFO("[coffee_shop_delivery] postStatus %i", gb_datahub::postRobotLocation(robotLocation_));
+      /*ROS_INFO("[coffee_shop_delivery] robotLocation_.id %s", robotLocation_.id.c_str());
+      ROS_INFO("[coffee_shop_delivery] robotLocation_.type %s", robotLocation_.type.c_str());
+      ROS_INFO("[coffee_shop_delivery] robotLocation_.episode %s", robotLocation_.episode.c_str());
+      ROS_INFO("[coffee_shop_delivery] robotLocation_.team %s", robotLocation_.team.c_str());
+      ROS_INFO("[coffee_shop_delivery] robotLocation_.timestamp %s", robotLocation_.timestamp.c_str());
+      ROS_INFO("[coffee_shop_delivery] robotLocation_.x %i", robotLocation_.x);
+      ROS_INFO("[coffee_shop_delivery] robotLocation_.y %i", robotLocation_.y);
+      ROS_INFO("[coffee_shop_delivery] robotLocation_.z %i", robotLocation_.z);
+
+			ROS_INFO("[coffee_shop_delivery] postStatus %i", gb_datahub::postRobotLocation(robotLocation_));*/
 
 		}
 		catch (tf::TransformException& ex)
@@ -176,6 +186,7 @@ protected:
 	std::string team_id_;
 	std::string team_key_ ;
   bica_graph::GraphClient graph_;
+  int seq;
 
 };
 
