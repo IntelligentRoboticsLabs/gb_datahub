@@ -258,20 +258,6 @@ namespace gb_datahub
   {
     std::string url_ = "https://api.mksmart.org/sciroc-competition/"+team_id_+"/sciroc-episode3-table/"+ table_.id;
 
-    if(table_.id == "table_1"){
-      table_.id = "TABLE0";
-    }else if(table_.id == "table_2"){
-      table_.id = "TABLE1";
-    }else if(table_.id == "table_3"){
-      table_.id = "TABLE2";
-    }else if(table_.id == "table_4"){
-      table_.id = "TABLE3";
-    }else if(table_.id == "table_5"){
-      table_.id = "TABLE4";
-    }else if(table_.id == "table_6"){
-      table_.id = "TABLE5";
-    }
-
     json j = tableToJson(table_);
     std::string info = j.dump();
 
@@ -656,6 +642,20 @@ namespace gb_datahub
   {
     json json;
 
+    if(table_.id == "table_1"){
+      table_.id = "TABLE0";
+    }else if(table_.id == "table_2"){
+      table_.id = "TABLE1";
+    }else if(table_.id == "table_3"){
+      table_.id = "TABLE2";
+    }else if(table_.id == "table_4"){
+      table_.id = "TABLE3";
+    }else if(table_.id == "table_5"){
+      table_.id = "TABLE4";
+    }else if(table_.id == "table_6"){
+      table_.id = "TABLE5";
+    }
+
     json["@id"] = table_.id;
     json["@type"] = table_.type;
     json["customers"] = table_.customers;
@@ -663,10 +663,10 @@ namespace gb_datahub
     if (table_.status == "ready"){
       table_.status = "Ready";
     }else if (table_.status == "needs_cleaning"){
-      table_.status = "Needs_cleaning";
-    } else if (table_.status == "needs_serving"){
+      table_.status = "Needs cleaning";
+    } else if (table_.status == "needs serving"){
         table_.status = "Needs_serving";
-    }else if (table_.status == "already_served"){
+    }else if (table_.status == "already served"){
       table_.status = "Already_served";
     }
 

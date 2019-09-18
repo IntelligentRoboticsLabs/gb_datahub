@@ -103,7 +103,7 @@ int main(int argc, char** argv)
 	t.id = "TABLE78";
 	t.type = "Table";
 	t.customers = 2;
-	t.status = "Already served";
+	t.status = "Needs serving";
 
 	int v = gb_datahub::postTable(t);
 	//std::cout << v << std::endl;
