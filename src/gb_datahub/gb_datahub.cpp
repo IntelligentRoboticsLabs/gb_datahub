@@ -666,10 +666,10 @@ namespace gb_datahub
       table_.status = "Ready";
     }else if (table_.status == "needs_cleaning"){
       table_.status = "Needs cleaning";
-    } else if (table_.status == "needs serving"){
-        table_.status = "Needs_serving";
-    }else if (table_.status == "already served"){
-      table_.status = "Already_served";
+    } else if (table_.status == "needs_serving"){
+        table_.status = "Needs serving";
+    }else if (table_.status == "already_served"){
+      table_.status = "Already served";
     }
 
     json["status"] = table_.status;
