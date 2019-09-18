@@ -142,33 +142,29 @@ public:
 						std::string response_raw = interest_edges[i].get().c_str();
 						response_raw.erase(0, response_raw.find(delimiter) + delimiter.length());
 						status_ = response_raw;
+
+					if ( last_status_ != status_)
+					{
+						last_status_ = status_;
+
+						robotStatus robotStatus_;
+						robotStatus_.id =  std::to_string(seq++);
+						robotStatus_.type = "RobotStatus";
+						robotStatus_.message = status_;
+						robotStatus_.episode = "EPISODE4";
+						robotStatus_.team = "gentlebots";
+						robotStatus_.timestamp = magicHour(boost::posix_time::to_iso_extended_string(ps_.header.stamp.toBoost()));
+																		 //2019-09-18T10:33:08.400779
+						robotStatus_.x = ps_.pose.position.x;
+						robotStatus_.y = ps_.pose.position.y;
+						robotStatus_.z = ps_.pose.position.z;
+
+						gb_datahub::postRobotStatus(robotStatus_);
+
+						graph_.remove_edge(interest_edges[i]);
+					}
 				}
 			}
-
-
-			//auto interest_edges = graph_.get_string_edges_from_node_by_data("sonny", "robot_status: [[:alnum:]_]*");
-			if (!interest_edges.empty() && last_status_ != status_)
-			{
-				//ROS_INFO("robot_status: %s", status_);
-				last_status_ = status_;
-
-				robotStatus robotStatus_;
-				robotStatus_.id =  std::to_string(seq++);
-				robotStatus_.type = "RobotStatus";
-				robotStatus_.message = interest_edges[0].get().c_str();
-				robotStatus_.episode = "EPISODE4";
-				robotStatus_.team = "gentlebots";
-				robotStatus_.timestamp = magicHour(boost::posix_time::to_iso_extended_string(ps_.header.stamp.toBoost()));
-																 //2019-09-18T10:33:08.400779
-				robotStatus_.x = ps_.pose.position.x;
-				robotStatus_.y = ps_.pose.position.y;
-				robotStatus_.z = ps_.pose.position.z;
-
-				gb_datahub::postRobotStatus(robotStatus_);
-
-				graph_.remove_edge(interest_edges[0]);
-			}
-
 		}
 		catch (tf::TransformException& ex)
 		{
