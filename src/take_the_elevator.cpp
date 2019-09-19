@@ -68,7 +68,7 @@ public:
     seq = 0;
 		last_status_ = "";
 
-		amcl_pose_ = nh_.subscribe("amcl_pose", 1, &TakeTheElevator::poseAMCLCallback, this);
+		amcl_pose_ = nh_.subscribe("/amcl_pose", 1, &TakeTheElevator::poseAMCLCallback, this);
 
 	}
 
@@ -76,10 +76,8 @@ public:
 	{
 	}
 
-
-		void poseAMCLCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msgAMCL)
+	void poseAMCLCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msgAMCL)
 	{
-
 			robotLocation robotLocation_;
 			robotLocation_.id = "SonnyLocation";
 			robotLocation_.type = "RobotLocation";
@@ -91,43 +89,41 @@ public:
 			robotLocation_.z = msgAMCL->pose.pose.orientation.w;
 
 			gb_datahub::postRobotLocation(robotLocation_);
-	    //ROS_INFO(msgAMCL);
 
+			//////////////////ROBOTSTATUS////////////////////////////
 
-						auto interest_edges = graph_.get_string_edges_from_node("sonny");
-						std::string status_;
-						for (int i=0; i< interest_edges.size(); i++){
-							if (interest_edges[i].get().find("robot_status") != std::string::npos){
-									std::cout << "------------------------" << std::endl;
-									std::cout << interest_edges[i].get().c_str() << std::endl;
-									std::cout << "------------------------" << std::endl;
+			auto interest_edges = graph_.get_string_edges_from_node("sonny");
+			std::string status_;
 
-									std::string delimiter = ":";
-									std::string response_raw = interest_edges[i].get().c_str();
-									response_raw.erase(0, response_raw.find(delimiter) + delimiter.length());
-									status_ = response_raw;
+			for (int i=0; i< interest_edges.size(); i++){
+				std::cout << interest_edges[i].get().c_str()<< std::endl;
 
-								if (last_status_ != status_)
-								{
-									last_status_ = status_;
+				if (interest_edges[i].get().find("robot_status") != std::string::npos){
+					std::string delimiter = ":";
+					std::string response_raw = interest_edges[i].get().c_str();
+					response_raw.erase(0, response_raw.find(delimiter) + delimiter.length());
+					status_ = response_raw;
 
-									robotStatus robotStatus_;
-									robotStatus_.id =  std::to_string(seq++);
-									robotStatus_.type = "RobotStatus";
-									robotStatus_.message =  status_;
-									robotStatus_.episode = "EPISODE4";
-									robotStatus_.team = "gentlebots";
-									robotStatus_.timestamp = magicHour(boost::posix_time::to_iso_extended_string(ros::Time::now().toBoost()));
-									robotStatus_.x = msgAMCL->pose.pose.position.x;
-									robotStatus_.y = msgAMCL->pose.pose.position.y;
-									robotStatus_.z = msgAMCL->pose.pose.orientation.w;
+					if (last_status_ != status_){
+						last_status_ = status_;
 
-									gb_datahub::postRobotStatus(robotStatus_);
+						robotStatus robotStatus_;
+						robotStatus_.id =  std::to_string(seq++);
+						robotStatus_.type = "RobotStatus";
+						robotStatus_.message =  status_;
+						robotStatus_.episode = "EPISODE4";
+						robotStatus_.team = "gentlebots";
+						robotStatus_.timestamp = magicHour(boost::posix_time::to_iso_extended_string(ros::Time::now().toBoost()));
+						robotStatus_.x = msgAMCL->pose.pose.position.x;
+						robotStatus_.y = msgAMCL->pose.pose.position.y;
+						robotStatus_.z = msgAMCL->pose.pose.orientation.w;
 
-									graph_.remove_edge(interest_edges[i]);
-								}
-							}
-						}
+						gb_datahub::postRobotStatus(robotStatus_);
+
+						graph_.remove_edge(interest_edges[i]);
+					}
+				}
+			}
 	}
 
 	std::string magicHour(std::string text)
@@ -281,6 +277,53 @@ public:
 	{
 		 tf::StampedTransform bf2map;
 		// poseCallback(bf2map);
+/*
+		int count = 0;
+		auto interest_edges = graph_.get_string_edges_from_node("sonny");
+		std::string status_;
+		for (int i=0; i< interest_edges.size(); i++){
+			if (interest_edges[i].get().find("robot_status") != std::string::npos){
+
+				std::cout << "------------------------" << std::endl;
+				std::cout << interest_edges[i].get().c_str() << std::endl;
+				std::cout << "------------------------" << std::endl;
+
+
+				std::string delimiter = ":";
+				std::string response_raw = interest_edges[i].get().c_str();
+				response_raw.erase(0, response_raw.find(delimiter) + delimiter.length());
+				status_ = response_raw;
+
+				std::cout << status_ << std::endl;
+
+				if (last_status_ != status_)
+				{
+					last_status_ = status_;
+
+					robotStatus robotStatus_;
+					robotStatus_.id =  "hola";
+					robotStatus_.type = "RobotStatus";
+					robotStatus_.message =  status_;
+					robotStatus_.episode = "EPISODE4";
+					robotStatus_.team = "gentlebots";
+					robotStatus_.timestamp = magicHour(boost::posix_time::to_iso_extended_string(ros::Time::now().toBoost()));
+					robotStatus_.x = 0;
+					robotStatus_.y = 0;
+					robotStatus_.z = 0;
+
+					graph_.remove_edge(interest_edges[i]);
+					std::cout <<gb_datahub::postRobotStatus(robotStatus_) << std::endl;
+					std::string a= "robot_status: Exiting the elevator. "+count;
+
+					graph_.add_edge("sonny",a, "sonny");
+					count++;
+
+				}
+
+			}
+
+		}
+		*/
 	 }
 
 protected:
