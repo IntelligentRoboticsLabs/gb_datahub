@@ -137,6 +137,10 @@ public:
 			std::string status_;
 			for (int i=0; i< interest_edges.size(); i++){
 				if (interest_edges[i].get().find("robot_status") != std::string::npos){
+						std::cout << "------------------------" << std::endl;
+						std::cout << interest_edges[i].get().c_str() << std::endl;
+						std::cout << "------------------------" << std::endl;
+
 						std::string delimiter = ":";
 						std::string response_raw = interest_edges[i].get().c_str();
 						response_raw.erase(0, response_raw.find(delimiter) + delimiter.length());
