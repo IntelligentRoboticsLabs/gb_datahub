@@ -52,6 +52,7 @@
 #include <gb_datahub/Menu.h>
 #include <gb_datahub/Product.h>
 #include <boost/algorithm/string.hpp>
+#include "geometry_msgs/PoseWithCovarianceStamped.h"
 
 using json = nlohmann::json;
 
@@ -66,11 +67,65 @@ public:
     seq = 0;
 		last_status_ = "";
 
+		amcl_pose_ = nh_.subscribe("amcl_pose", 1, &CoffeeShopDelivery::poseAMCLCallback, this);
 	}
 
 	~CoffeeShopDelivery()
 	{
 	}
+
+	void poseAMCLCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msgAMCL)
+{
+
+		robotLocation robotLocation_;
+		robotLocation_.id = "SonnyLocation";
+		robotLocation_.type = "RobotLocation";
+		robotLocation_.episode = "EPISODE3";
+		robotLocation_.team = team_id_;
+		robotLocation_.timestamp = magicHour(boost::posix_time::to_iso_extended_string(ros::Time::now().toBoost()));
+		robotLocation_.x = msgAMCL->pose.pose.position.x;
+		robotLocation_.y = msgAMCL->pose.pose.position.y;
+		robotLocation_.z = msgAMCL->pose.pose.orientation.w;
+
+		gb_datahub::postRobotLocation(robotLocation_);
+    //ROS_INFO(msgAMCL);
+
+
+					auto interest_edges = graph_.get_string_edges_from_node("sonny");
+					std::string status_;
+					for (int i=0; i< interest_edges.size(); i++){
+						if (interest_edges[i].get().find("robot_status") != std::string::npos){
+								std::cout << "------------------------" << std::endl;
+								std::cout << interest_edges[i].get().c_str() << std::endl;
+								std::cout << "------------------------" << std::endl;
+
+								std::string delimiter = ":";
+								std::string response_raw = interest_edges[i].get().c_str();
+								response_raw.erase(0, response_raw.find(delimiter) + delimiter.length());
+								status_ = response_raw;
+
+							if (last_status_ != status_)
+							{
+								last_status_ = status_;
+
+								robotStatus robotStatus_;
+								robotStatus_.id =  std::to_string(seq++);
+								robotStatus_.type = "RobotStatus";
+								robotStatus_.message =  status_;
+								robotStatus_.episode = "EPISODE3";
+								robotStatus_.team = "gentlebots";
+								robotStatus_.timestamp = magicHour(boost::posix_time::to_iso_extended_string(ros::Time::now().toBoost()));
+								robotStatus_.x = msgAMCL->pose.pose.position.x;
+								robotStatus_.y = msgAMCL->pose.pose.position.y;
+								robotStatus_.z = msgAMCL->pose.pose.orientation.w;
+
+								gb_datahub::postRobotStatus(robotStatus_);
+
+								graph_.remove_edge(interest_edges[i]);
+							}
+						}
+					}
+}
 
 	std::string magicHour(std::string text)
 	{
@@ -210,21 +265,21 @@ public:
 	void step()
 	{
 		tf::StampedTransform bf2map;
-		poseCallback(bf2map);
+		//poseCallback(bf2map);
+		//poseAMCLCallback();
 	}
 
 protected:
 
 	ros::NodeHandle nh_;
 	ros::ServiceServer srv_;
-  ros::Subscriber robot_location_sub_;
+  ros::Subscriber robot_location_sub_, amcl_pose_;
 	ros::Subscriber tf_sub_;
 	tf::TransformListener tf_listener_;
 	std::string team_id_;
 	std::string team_key_ ;
   bica_graph::GraphClient graph_;
   int seq;
-
 	std::string last_status_;
 
 };
